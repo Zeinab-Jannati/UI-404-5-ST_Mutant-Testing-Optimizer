@@ -9,10 +9,9 @@ public class IPEX_Mutation {
 
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i);
-            if (line.contains("solve(a, b)")) {
+            if (line.contains("solve(int a, int b)")) {
                 mutantCount++;
-                String mutated = line.replace("solve(a, b)", "solve(b, a)");
-                MutationUtils.saveMutant(lines, i, mutated, "IPEX", mutantCount);
+                String mutated = line.replace("solve(int a, int b)", "solve(b, a)");                MutationUtils.saveMutant(lines, i, mutated, "IPEX", mutantCount);
             }
         }
         System.out.println("IPEX Operator: " + mutantCount + " mutants generated.");

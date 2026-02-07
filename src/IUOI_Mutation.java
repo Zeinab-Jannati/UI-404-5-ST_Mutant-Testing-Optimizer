@@ -10,11 +10,10 @@ public class IUOI_Mutation {
 
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i);
-            if (line.contains("solve(a, b)")) {
+            if (line.contains("solve(int a, int b)")) {
                 for (String op : unaryOps) {
                     mutantCount++;
-                    String mutated = line.replace("solve(a, b)", "solve(" + op + "a, b)");
-                    MutationUtils.saveMutant(lines, i, mutated, "IUOI", mutantCount);
+                    String mutated = line.replace("solve(int a, int b)", "solve(" + op + "a, int b)");                    MutationUtils.saveMutant(lines, i, mutated, "IUOI", mutantCount);
                 }
             }
         }

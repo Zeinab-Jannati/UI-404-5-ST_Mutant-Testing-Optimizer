@@ -55,4 +55,16 @@ public class MutationUtils {
 
         return killed;
     }
+
+
+    public static void showIntegrationMenu() {
+        System.out.println("\n INTEGRATION MUTATION OPERATORS (Chapter 9.2):");
+        System.out.println("   1. IPVR - Integration Parameter Variable Replacement");
+        System.out.println("   2. IUOI - Integration Unary Operator Insertion");
+        System.out.println("   3. IPEX - Integration Parameter Exchange");
+        System.out.println("   4. IMCD - Integration Method Call Deletion");
+        System.out.println("   5. IREM - Integration Return Expression Modification");
+        System.out.println("   6. All Integration Operators");
+        System.out.println("   0. Skip Integration Mutations");
+    }
 }

@@ -9,10 +9,9 @@ public class IMCD_Mutation {
 
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i);
-            if (line.contains("solve(a, b)")) {
+            if (line.contains("solve(int a, int b)")) {
                 mutantCount++;
-                String mutated = line.replace("solve(a, b)", "0");
-                MutationUtils.saveMutant(lines, i, mutated, "IMCD", mutantCount);
+                String mutated = line.replace("solve(int a, int b)", "0");                MutationUtils.saveMutant(lines, i, mutated, "IMCD", mutantCount);
             }
         }
         System.out.println("IMCD Operator: " + mutantCount + " mutants generated.");

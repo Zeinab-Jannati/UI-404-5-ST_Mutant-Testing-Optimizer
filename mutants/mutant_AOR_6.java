@@ -2,7 +2,7 @@ public class Calculator {
 
     // متد برای تست AOI, AOR, AOD
     public int solve(int a, int b) {
-        return a; // هدف اصلی جهش‌ها
+        return a / b; // هدف اصلی جهش‌ها
     }
 
     // متد برای تست COR, COI, COD به روش ACOC
