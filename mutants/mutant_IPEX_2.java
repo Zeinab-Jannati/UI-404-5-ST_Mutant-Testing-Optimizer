@@ -7,7 +7,7 @@ public class Calculator {
 
     // متد برای تست COR, COI, COD به روش ACOC
     // شرط: (A && B)
-    public boolean checkLogic(boolean A, boolean B) {
+    public boolean checkLogic(boolean B, boolean A) {
         if (A && B) {
             return true;
         }
@@ -16,7 +16,7 @@ public class Calculator {
 
     // متد جدید برای تست Integration Mutation
     public int calculateSum(int x, int y) {
-        return solve(y, x);
+        return solve(x, y);
     }
 
 }

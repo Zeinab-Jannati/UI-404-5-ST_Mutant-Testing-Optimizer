@@ -9,9 +9,29 @@ public class IMCD_Mutation {
 
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i);
-            if (line.contains("solve(int a, int b)")) {
+
+            if (line.contains("return solve(")) {
                 mutantCount++;
-                String mutated = line.replace("solve(int a, int b)", "0");                MutationUtils.saveMutant(lines, i, mutated, "IMCD", mutantCount);
+                String mutated = line.replaceAll("return solve\\(.*\\);", "return 0;");
+                MutationUtils.saveMutant(lines, i, mutated, "IMCD", mutantCount);
+
+                mutantCount++;
+                String mutated2 = line.replaceAll("return solve\\(.*\\);", "return 1;");
+                MutationUtils.saveMutant(lines, i, mutated2, "IMCD", mutantCount);
+            }
+
+            if (line.contains("solve(") && !line.contains("return solve(")) {
+                mutantCount++;
+                String mutated = line.replaceAll("solve\\(\\s*(\\w+)\\s*,\\s*(\\w+)\\s*\\)", "$1");
+                if (!mutated.equals(line)) {
+                    MutationUtils.saveMutant(lines, i, mutated, "IMCD", mutantCount);
+                }
+
+                mutantCount++;
+                String mutated2 = line.replaceAll("solve\\(\\s*(\\w+)\\s*,\\s*(\\w+)\\s*\\)", "$2");
+                if (!mutated2.equals(line)) {
+                    MutationUtils.saveMutant(lines, i, mutated2, "IMCD", mutantCount);
+                }
             }
         }
         System.out.println("IMCD Operator: " + mutantCount + " mutants generated.");

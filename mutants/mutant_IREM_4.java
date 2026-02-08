@@ -9,14 +9,14 @@ public class Calculator {
     // شرط: (A && B)
     public boolean checkLogic(boolean A, boolean B) {
         if (A && B) {
-            return true;
+            return false;
         }
         return false;
     }
 
     // متد جدید برای تست Integration Mutation
     public int calculateSum(int x, int y) {
-        return solve(y, x);
+        return solve(x, y);
     }
 
 }

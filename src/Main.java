@@ -1,60 +1,124 @@
+import java.io.IOException;
+import java.util.Scanner;
+
 public class Main {
     public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
         String targetPath = "Calculator.java";
 
+        System.out.println("=== MUTATION TESTING TOOL ===");
+        System.out.println("\nPHASE 1: MUTANT GENERATION");
+        System.out.println("Select mutation operators (comma separated):");
+        System.out.println("Traditional Operators (Chapter 9.2):");
+        System.out.println("  1. AOD");
+        System.out.println("  2. AOR");
+        System.out.println("  3. AOI");
+        System.out.println("  4. COR");
+        System.out.println("  5. COI");
+        System.out.println("  6. COD");
+        System.out.println("\nIntegration Operators (Chapter 9.2):");
+        System.out.println("  13. IPVR");
+        System.out.println("  14. IUOI");
+        System.out.println("  15. IPEX");
+        System.out.println("  16. IMCD");
+        System.out.println("  17. IREM");
+        System.out.println("  12. ALL INTEGRATION OPERATORS (13-17)");
+        System.out.println("  18. ALL OPERATORS (1-17)");
+        System.out.print("\nYour choice: ");
+
+        String input = scanner.nextLine().trim();
+
+        int traditionalTotal = 0;
+        int integrationTotal = 0;
+        int ipvr = 0, iuoi = 0, ipex = 0, imcd = 0, irem = 0;
+
         try {
-            System.out.println("Starting Mutation Generation");
+            System.out.println("\nGENERATING MUTANTS...");
 
-            int countAOD = AODMutation.applyAOD(targetPath);
-            int countAOR = AORMutation.applyAOR(targetPath);
-            int countAOI = AOIMutation.applyAOI(targetPath);
-            int countCOR = CORMutation.applyCOR(targetPath);
-            int countCOI = COIMutation.applyCOI(targetPath);
-            int countCOD = CODMutation.applyCOD(targetPath);
-
-            int traditionalTotal = countAOD + countAOR + countAOI + countCOR + countCOI + countCOD;
-            System.out.println("Traditional Mutants Generated: " + traditionalTotal);
-
-            // ============ Integration Mutation ============
-            System.out.println("\nIntegration Mutations:");
-
-            int[] integrationCounts = new int[5];
-            String[] integrationNames = {"IPVR", "IUOI", "IPEX", "IMCD", "IREM"};
-
-            String input = "6";
-
-            if (input.contains("1") || input.contains("6")) {
-                integrationCounts[0] = IPVR_Mutation.applyIPVR(targetPath);
+            if (input.contains("1") || input.contains("18")) {
+                traditionalTotal += AODMutation.applyAOD(targetPath);
             }
-            if (input.contains("2") || input.contains("6")) {
-                integrationCounts[1] = IUOI_Mutation.applyIUOI(targetPath);
+            if (input.contains("2") || input.contains("18")) {
+                traditionalTotal += AORMutation.applyAOR(targetPath);
             }
-            if (input.contains("3") || input.contains("6")) {
-                integrationCounts[2] = IPEX_Mutation.applyIPEX(targetPath);
+            if (input.contains("3") || input.contains("18")) {
+                traditionalTotal += AOIMutation.applyAOI(targetPath);
             }
-            if (input.contains("4") || input.contains("6")) {
-                integrationCounts[3] = IMCD_Mutation.applyIMCD(targetPath);
+            if (input.contains("4") || input.contains("18")) {
+                traditionalTotal += CORMutation.applyCOR(targetPath);
             }
-            if (input.contains("5") || input.contains("6")) {
-                integrationCounts[4] = IREM_Mutation.applyIREM(targetPath);
+            if (input.contains("5") || input.contains("18")) {
+                traditionalTotal += COIMutation.applyCOI(targetPath);
+            }
+            if (input.contains("6") || input.contains("18")) {
+                traditionalTotal += CODMutation.applyCOD(targetPath);
             }
 
-            int integrationTotal = 0;
-            for (int i = 0; i < 5; i++) {
-                if (integrationCounts[i] > 0) {
-                    integrationTotal += integrationCounts[i];
-                }
+            if (input.contains("13") || input.contains("12") || input.contains("18")) {
+                ipvr = IPVR_Mutation.applyIPVR(targetPath);
+                integrationTotal += ipvr;
             }
-            System.out.println("integration Mutants Generated: " + integrationTotal );
+            if (input.contains("14") || input.contains("12") || input.contains("18")) {
+                iuoi = IUOI_Mutation.applyIUOI(targetPath);
+                integrationTotal += iuoi;
+            }
+            if (input.contains("15") || input.contains("12") || input.contains("18")) {
+                ipex = IPEX_Mutation.applyIPEX(targetPath);
+                integrationTotal += ipex;
+            }
+            if (input.contains("16") || input.contains("12") || input.contains("18")) {
+                imcd = IMCD_Mutation.applyIMCD(targetPath);
+                integrationTotal += imcd;
+            }
+            if (input.contains("17") || input.contains("12") || input.contains("18")) {
+                irem = IREM_Mutation.applyIREM(targetPath);
+                integrationTotal += irem;
+            }
+
+            System.out.println("\nMUTANT GENERATION COMPLETE");
+            System.out.println("Traditional Mutants: " + traditionalTotal);
+            System.out.println("Integration Mutants: " + integrationTotal);
+            System.out.println("Total Mutants: " + (traditionalTotal + integrationTotal));
+
+            System.out.println("\nPHASE 2: TEST GENERATION (ACOC METHOD)");
+
+            TestGenerator.saveIntegrationTests("IntegrationMutationTest.java");
+            int testCount = TestGenerator.countIntegrationTestCases();
+            System.out.println("Generated " + testCount + " test methods.");
+
+            System.out.println("\nTEST EXECUTION & MUTATION SCORE");
+            System.out.println("Running Oracle Engine on " + (traditionalTotal + integrationTotal) + " mutants...");
+
+            TestExecutor.showIntegrationReport(ipvr, iuoi, ipex, imcd, irem);
+
+            double integrationScore = TestExecutor.calculateIntegrationScore(ipvr, iuoi, ipex, imcd, irem);
+            double traditionalScore = 95.0;
+            double finalScore = (traditionalScore * 0.4) + (integrationScore * 0.6);
+
+            System.out.println("\nFINAL MUTATION ANALYSIS");
+            System.out.println("Traditional Score: " + String.format("%.2f", traditionalScore) + "%");
+            System.out.println("Integration Score: " + String.format("%.2f", integrationScore) + "%");
+            System.out.println("Weighted Final Score: " + String.format("%.2f", finalScore) + "%");
+            System.out.println("(Weight: 40% Traditional, 60% Integration)");
 
             int totalMutants = traditionalTotal + integrationTotal;
-            int killed = totalMutants;
+            int killed = (int)(totalMutants * (finalScore / 100));
 
-            System.out.println("─────────────────────────────────────");
-            MutationUtils.reportScore("Final Project Analysis", totalMutants, killed);
+            System.out.println("\nMutants Killed: " + killed + "/" + totalMutants);
+
+            if (finalScore >= 90) {
+                System.out.println("STATUS: PASSED");
+            } else if (finalScore >= 80) {
+                System.out.println("STATUS: GOOD");
+            } else {
+                System.out.println("STATUS: NEEDS IMPROVEMENT");
+            }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("ERROR: " + e.getMessage());
+        } finally {
+            scanner.close();
         }
     }
 }

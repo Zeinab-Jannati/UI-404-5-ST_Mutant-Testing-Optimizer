@@ -15,8 +15,8 @@ public class Calculator {
     }
 
     // متد جدید برای تست Integration Mutation
-    public int calculateSum(int x, int y) {
-        return solve(y, x);
+    public int calculateSum(int y, int x) {
+        return solve(x, y);
     }
 
 }

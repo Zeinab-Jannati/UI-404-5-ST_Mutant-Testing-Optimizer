@@ -2,7 +2,7 @@ public class Calculator {
 
     // متد برای تست AOI, AOR, AOD
     public int solve(int a, int b) {
-        return a + b; // هدف اصلی جهش‌ها
+        return (++a) + b; // هدف اصلی جهش‌ها
     }
 
     // متد برای تست COR, COI, COD به روش ACOC
@@ -16,7 +16,7 @@ public class Calculator {
 
     // متد جدید برای تست Integration Mutation
     public int calculateSum(int x, int y) {
-        return solve(y, x);
+        return solve(x, y);
     }
 
 }

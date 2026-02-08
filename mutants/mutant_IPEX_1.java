@@ -1,7 +1,7 @@
 public class Calculator {
 
     // متد برای تست AOI, AOR, AOD
-    public int solve(b, a) {
+    public int solve(int b, int a) {
         return a + b; // هدف اصلی جهش‌ها
     }
 
