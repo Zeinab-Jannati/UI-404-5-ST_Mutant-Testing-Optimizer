@@ -1,10 +1,9 @@
-import java.io.*;
+import java.io.IOException;
 import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class AODMutation {
-    private static final String[] OPERATORS = {"\\+", "-", "\\*", "/"};
 
     public static int applyAOD(String filePath) throws IOException {
         List<String> lines = Files.readAllLines(Paths.get(filePath));
@@ -12,22 +11,29 @@ public class AODMutation {
 
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i);
-            for (String op : OPERATORS) {
-                if (line.matches(".*\\w\\s*" + op + "\\s*\\w.*")) {
-                    count++;
-                    String mutatedLine = line.replaceAll("(\\w)\\s*" + op + "\\s*\\w", "$1");
 
-                    saveMutant(lines, i, mutatedLine, count);
-                }
+            // return a + b;
+            if (line.matches(".*return\\s+\\w+\\s*[+\\-*/]\\s*\\w+\\s*;.*")) {
+
+                // return a;
+                String m1 = line.replaceAll(
+                        "return\\s+(\\w+)\\s*[+\\-*/]\\s*(\\w+)\\s*;",
+                        "return $1;"
+                );
+                count++;
+                MutationUtils.saveMutant(lines, i, m1, "AOD", count);
+
+                // return b;
+                String m2 = line.replaceAll(
+                        "return\\s+(\\w+)\\s*[+\\-*/]\\s*(\\w+)\\s*;",
+                        "return $2;"
+                );
+                count++;
+                MutationUtils.saveMutant(lines, i, m2, "AOD", count);
             }
         }
-        System.out.println("AOD Operator: Generated " + count + " mutants.");
-        return count;
-    }
 
-    private static void saveMutant(List<String> originalLines, int lineIdx, String mutatedLine, int id) throws IOException {
-        List<String> mutantContent = new ArrayList<>(originalLines);
-        mutantContent.set(lineIdx, mutatedLine);
-        Files.write(Paths.get("mutant_AOD_" + id + ".java"), mutantContent);
+        System.out.println("AOD Operator: " + count + " mutants generated.");
+        return count;
     }
 }
