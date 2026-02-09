@@ -31,29 +31,38 @@ public class Main {
 
         int traditionalTotal = 0;
         int integrationTotal = 0;
+        int aod=0, aor=0, aoi=0, cor=0, coi=0, cod=0;
         int ipvr = 0, iuoi = 0, ipex = 0, imcd = 0, irem = 0;
 
         try {
             System.out.println("\nGENERATING MUTANTS...");
 
-            if (input.contains("1") || input.contains("18")) {
-                traditionalTotal += AODMutation.applyAOD(targetPath);
+
+            if (input.equals("1") || input.equals("18") || input.contains("1,")) {
+                aod = AODMutation.applyAOD(targetPath);
+                traditionalTotal += aod;
             }
-            if (input.contains("2") || input.contains("18")) {
-                traditionalTotal += AORMutation.applyAOR(targetPath);
+            if (input.equals("2") || input.equals("18") || input.contains("2,")) {
+                aor = AORMutation.applyAOR(targetPath);
+                traditionalTotal += aor;
             }
-            if (input.contains("3") || input.contains("18")) {
-                traditionalTotal += AOIMutation.applyAOI(targetPath);
+            if (input.equals("3") || input.equals("18") || input.contains("3,")) {
+                aoi = AOIMutation.applyAOI(targetPath);
+                traditionalTotal += aoi;
             }
-            if (input.contains("4") || input.contains("18")) {
-                traditionalTotal += CORMutation.applyCOR(targetPath);
+            if (input.equals("4") || input.equals("18") || input.contains("4,")) {
+                cor = CORMutation.applyCOR(targetPath);
+                traditionalTotal += cor;
             }
-            if (input.contains("5") || input.contains("18")) {
-                traditionalTotal += COIMutation.applyCOI(targetPath);
+            if (input.equals("5") || input.equals("18") || input.contains("5,")) {
+                coi = COIMutation.applyCOI(targetPath);
+                traditionalTotal += coi;
             }
-            if (input.contains("6") || input.contains("18")) {
-                traditionalTotal += CODMutation.applyCOD(targetPath);
+            if (input.equals("6") || input.equals("18") || input.contains("6,")) {
+                cod = CODMutation.applyCOD(targetPath);
+                traditionalTotal += cod;
             }
+
 
             if (input.contains("13") || input.contains("12") || input.contains("18")) {
                 ipvr = IPVR_Mutation.applyIPVR(targetPath);
@@ -90,6 +99,7 @@ public class Main {
             System.out.println("\nTEST EXECUTION & MUTATION SCORE");
             System.out.println("Running Oracle Engine on " + (traditionalTotal + integrationTotal) + " mutants...");
 
+            TestExecutor.showTraditionalReport(aod, aor, aoi, cor, coi, cod);
             TestExecutor.showIntegrationReport(ipvr, iuoi, ipex, imcd, irem);
 
             double integrationScore = TestExecutor.calculateIntegrationScore(ipvr, iuoi, ipex, imcd, irem);

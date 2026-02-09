@@ -1,22 +1,15 @@
-public class Calculator {
+public class IntegrationTest {
 
-    // متد برای تست AOI, AOR, AOD
-    public int solve(int a, int b) {
-        return a + b; // هدف اصلی جهش‌ها
-    }
-
-    // متد برای تست COR, COI, COD به روش ACOC
-    // شرط: (A && B)
-    public boolean checkLogic(boolean A, boolean B) {
-        if (!(A && B) {
-            return true;
+    public int processData(int val1, int val2) {
+        if (!(val1 > 0 && val2 > 0)) {
+            return helper(val1, val2);
         }
-        return false;
+        return helper(val2, val1);
     }
 
-    // متد جدید برای تست Integration Mutation
-    public int calculateSum(int x, int y) {
-        return solve(x, y);
+    public int helper(int a, int b) {
+        int result = a * 2;
+        result = result - b;
+        return result;
     }
-
 }

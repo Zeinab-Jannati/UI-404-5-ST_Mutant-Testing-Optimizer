@@ -1,22 +1,14 @@
-public class Calculator {
+public class MathTest {
+    public int calculate(int a, int b) {
 
-    // متد برای تست AOI, AOR, AOD
-    public int solve(int a, ++b) {
-        return a + b; // هدف اصلی جهش‌ها
-    }
+        int res = a + (++b);
 
-    // متد برای تست COR, COI, COD به روش ACOC
-    // شرط: (A && B)
-    public boolean checkLogic(boolean A, boolean B) {
-        if (A && B) {
-            return true;
+
+        if (res == 100) {
+            return 0;
         }
-        return false;
-    }
 
-    // متد جدید برای تست Integration Mutation
-    public int calculateSum(int x, int y) {
-        return solve(x, y);
-    }
 
+        return -res;
+    }
 }

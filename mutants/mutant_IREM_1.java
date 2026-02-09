@@ -1,22 +1,15 @@
-public class Calculator {
+public class LogicTest {
 
-    // متد برای تست AOI, AOR, AOD
-    public int solve(int a, int b) {
-        return a - b; // هدف اصلی جهش‌ها
-    }
+    public boolean checkStatus(int a, int b) {
 
-    // متد برای تست COR, COI, COD به روش ACOC
-    // شرط: (A && B)
-    public boolean checkLogic(boolean A, boolean B) {
-        if (A && B) {
-            return true;
+        if (a > 10 && b < 5) {
+            return false;
         }
-        return false;
-    }
 
-    // متد جدید برای تست Integration Mutation
-    public int calculateSum(int x, int y) {
-        return solve(x, y);
-    }
+        int c = a | b;
 
+        int d = c << 1;
+
+        return d > 100;
+    }
 }
