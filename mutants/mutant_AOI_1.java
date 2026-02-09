@@ -1,15 +1,21 @@
-public class IntegrationTest {
+package org.example;
 
-    public int processData(int val1, int val2) {
-        if (val1 > 0 && val2 > 0) {
-            return helper(val1, val2);
-        }
-        return helper(val2, val1);
+public class Calculator {
+    // متد برای تست AOI, AOR, AOD
+    public int solve(int a, int b) {
+        return a; // این باید جمع باشد نه فقط a!
     }
 
-    public int helper(int a, int b) {
-        int result = a * 2;
-        result = result - b;
-        return -result;
+    // متد برای تست COR, COI, COD به روش ACOC
+    public boolean checkLogic(boolean A, boolean B) {
+        if (A && B) {
+            return true;
+        }
+        return false;
+    }
+
+    // متد جدید برای تست Integration Mutation
+    public int calculateSum(int x, int y) {
+        return 0;
     }
 }
