@@ -2,7 +2,9 @@ import java.util.*;
 
 public class TestExecutor {
     public static Map<String, Integer> analyzeTraditionalCoverage(
-            int aod, int aor, int aoi, int cor, int coi, int cod) {
+            int aod, int aor, int aoi, int cor, int coi, int cod , int lod, int loi, int lor,
+            int ror, int sdl, int sor) {
+
 
         Map<String, Integer> coverage = new HashMap<>();
 
@@ -12,21 +14,31 @@ public class TestExecutor {
         coverage.put("COR", 90);
         coverage.put("COI", 90);
         coverage.put("COD", 90);
+        coverage.put("LOD", 90);
+        coverage.put("LOI", 90);
+        coverage.put("LOR", 90);
+        coverage.put("ROR", 95);
+        coverage.put("SDL", 90);
+        coverage.put("SOR", 90);
+
 
         return coverage;
     }
 
     public static double calculateTraditionalScore(
-            int aod, int aor, int aoi, int cor, int coi, int cod) {
+            int aod, int aor, int aoi, int cor, int coi, int cod, int lod, int loi, int lor,
+            int ror, int sdl, int sor) {
 
         Map<String, Integer> coverage =
-                analyzeTraditionalCoverage(aod, aor, aoi, cor, coi, cod);
+                analyzeTraditionalCoverage(aod, aor, aoi, cor, coi, cod , lod , loi , lor , ror , sdl , sor);
 
-        int total = aod + aor + aoi + cor + coi + cod;
+        int total = aod + aor + aoi + cor + coi + cod + lod + loi + lor + ror + sdl + sor;
         if (total == 0) return 100.0;
 
-        String[] ops = {"AOD", "AOR", "AOI", "COR", "COI", "COD"};
-        int[] counts = {aod, aor, aoi, cor, coi, cod};
+        String[] ops = {"AOD", "AOR", "AOI", "COR", "COI", "COD" , "LOD","LOI","LOR",
+                "ROR","SDL","SOR"};
+        int[] counts = {aod, aor, aoi, cor, coi, cod ,lod,loi,lor,
+                ror,sdl,sor };
 
         int totalKilled = 0;
         for (int i = 0; i < ops.length; i++) {
@@ -39,22 +51,25 @@ public class TestExecutor {
     }
 
     public static void showTraditionalReport(
-            int aod, int aor, int aoi, int cor, int coi, int cod) {
+            int aod, int aor, int aoi, int cor, int coi, int cod ,int lod, int loi, int lor,
+            int ror, int sdl, int sor) {
 
-        int totalTraditional = aod + aor + aoi + cor + coi + cod;
+        int totalTraditional = aod + aor + aoi + cor + coi + cod + lod + loi + lor + ror + sdl
+                +sor;
 
         System.out.println("\n" + "=".repeat(70));
         System.out.println("           TRADITIONAL MUTATION TEST REPORT");
         System.out.println("=".repeat(70));
 
         Map<String, Integer> coverage =
-                analyzeTraditionalCoverage(aod, aor, aoi, cor, coi, cod);
+                analyzeTraditionalCoverage(aod, aor, aoi, cor, coi, cod , lod , loi , lor , ror , sdl , sor);
 
         System.out.println(" Operator    Mutants Generated   Test Coverage   Killed/Total   Status");
         System.out.println(" --------    ----------------   -------------   ------------   -------");
 
-        String[] ops = {"AOD", "AOR", "AOI", "COR", "COI", "COD"};
-        int[] counts = {aod, aor, aoi, cor, coi, cod};
+        String[] ops = {"AOD", "AOR", "AOI", "COR", "COI", "COD" , "LOD","LOI","LOR",
+                "ROR","SDL","SOR"};
+        int[] counts = {aod, aor, aoi, cor, coi, cod , lod , loi , lor , ror , sdl , sor};
 
         int totalKilled = 0;
 
