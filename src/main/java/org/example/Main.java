@@ -50,27 +50,35 @@ public class Main {
         try {
             System.out.println("\n🛠 GENERATING MUTANTS FOR " + fileName + "...");
 
-            // Traditional Mutations
-            if (input.contains("1") || input.contains("18")) AODMutation.applyAOD(targetPath);
-            if (input.contains("2") || input.contains("18")) AORMutation.applyAOR(targetPath);
-            if (input.contains("3") || input.contains("18")) AOIMutation.applyAOI(targetPath);
-            if (input.contains("4") || input.contains("18")) CORMutation.applyCOR(targetPath);
-            if (input.contains("5") || input.contains("18")) COIMutation.applyCOI(targetPath);
-            if (input.contains("6") || input.contains("18")) CODMutation.applyCOD(targetPath);
-            if (input.contains("7") || input.contains("18")) AODMutation.applyAOD(targetPath);
-            if (input.contains("8") || input.contains("18")) AORMutation.applyAOR(targetPath);
-            if (input.contains("9") || input.contains("18")) AOIMutation.applyAOI(targetPath);
-            if (input.contains("10") || input.contains("18")) CORMutation.applyCOR(targetPath);
-            if (input.contains("11") || input.contains("18")) COIMutation.applyCOI(targetPath);
-            if (input.contains("12") || input.contains("18")) CODMutation.applyCOD(targetPath);
-            // Integration Mutations
-            if (input.contains("13") || input.contains("18")) IPVR_Mutation.applyIPVR(targetPath);
-            if (input.contains("14") || input.contains("18")) IUOI_Mutation.applyIUOI(targetPath);
-            if (input.contains("15") || input.contains("18")) IPEX_Mutation.applyIPEX(targetPath);
-            if (input.contains("16") || input.contains("18")) IMCD_Mutation.applyIMCD(targetPath);
-            if (input.contains("17") || input.contains("18")) IREM_Mutation.applyIREM(targetPath);
-
-            System.out.println("\nMUTANT GENERATION COMPLETE");
+            switch (input) {
+                case "1" -> AODMutation.applyAOD(targetPath);
+                case "2" -> AORMutation.applyAOR(targetPath);
+                case "3" -> AOIMutation.applyAOI(targetPath);
+                case "4" -> CORMutation.applyCOR(targetPath);
+                case "5" -> COIMutation.applyCOI(targetPath);
+                case "6" -> CODMutation.applyCOD(targetPath);
+                case "7" -> LODMutation.applyLOD(targetPath);
+                case "8" -> LOIMutation.applyLOI(targetPath);
+                case "9" -> LORMutation.applyLOR(targetPath);
+                case "10" -> RORMutation.applyROR(targetPath);
+                case "11" -> SDLMutation.applySDL(targetPath);
+                case "12" -> SORMutation.applySOR(targetPath);
+                case "18" -> { // ALL
+                    AODMutation.applyAOD(targetPath);
+                    AORMutation.applyAOR(targetPath);
+                    AOIMutation.applyAOI(targetPath);
+                    CORMutation.applyCOR(targetPath);
+                    COIMutation.applyCOI(targetPath);
+                    CODMutation.applyCOD(targetPath);
+                    LODMutation.applyLOD(targetPath);
+                    LOIMutation.applyLOI(targetPath);
+                    LORMutation.applyLOR(targetPath);
+                    RORMutation.applyROR(targetPath);
+                    SDLMutation.applySDL(targetPath);
+                    SORMutation.applySOR(targetPath);
+                }
+                default -> System.out.println("Invalid choice.");
+            }
 
             // 3. اجرای Mutant ها
             System.out.println("\n🚀 PHASE 2: EXECUTION (SMART TEST ENGINE)");
@@ -89,6 +97,9 @@ public class Main {
             double finalScore = (traditionalScore * 0.4) + (integrationScore * 0.6);
             System.out.println("\nFINAL SCORE FOR " + fileName + ": " + String.format("%.2f", finalScore) + "%");
 
+            System.out.println("\n🤖 PHASE 3: AI TEST SUITE MINIMIZATION");
+            SmartTestGenerator.optimizeTestSuite(MutationRunner.getDetailedResults());
+
         } catch (Exception e) {
             System.out.println("\nAN ERROR OCCURRED: " + e.getMessage());
         } finally {
@@ -100,32 +111,32 @@ public class Main {
         Path testPath = Paths.get("src/test/java/org/example/GenericMutationTest.java");
         Files.createDirectories(testPath.getParent());
 
+        // استفاده از تست‌های قوی‌تر که تمام ترکیبات (ACOC) را پوشش می‌دهند
         StringBuilder sb = new StringBuilder();
         sb.append("package org.example;\n");
         sb.append("import org.junit.Test;\n");
         sb.append("import static org.junit.Assert.*;\n");
-        sb.append("import java.lang.reflect.Method;\n");
         sb.append("public class GenericMutationTest {\n");
-        sb.append("    @Test\n");
-        sb.append("    public void runKillTests() throws Exception {\n");
-        sb.append("        Calculator calc = new Calculator();\n");
-        sb.append("        Method[] methods = calc.getClass().getDeclaredMethods();\n");
-        sb.append("        \n");
-        sb.append("        for (Method m : methods) {\n");
-        sb.append("            if (m.getName().equals(\"solve\")) {\n");
-        sb.append("                // تست اختصاصی برای متد solve\n");
-        sb.append("                assertEquals(\"Killed by solve pos\", 15, (int)m.invoke(calc, 5, 10));\n");
-        sb.append("                assertEquals(\"Killed by solve neg\", 15, (int)m.invoke(calc, -5, 10));\n");
-        sb.append("            }\n");
-        sb.append("            if (m.getName().equals(\"checkLogic\")) {\n");
-        sb.append("                // تست اختصاصی برای متد منطقی\n");
-        sb.append("                assertTrue(\"Killed logic TT\", (boolean)m.invoke(calc, true, true));\n");
-        sb.append("                assertFalse(\"Killed logic FT\", (boolean)m.invoke(calc, false, true));\n");
-        sb.append("            }\n");
-        sb.append("        }\n");
-        sb.append("    }\n");
-        sb.append("}");
 
+        // تست ACOC برای متد solve
+        sb.append("    @Test\n");
+        sb.append("    public void testSolveACOC() {\n");
+        sb.append("        Calculator calc = new Calculator();\n");
+        sb.append("        assertEquals(15, calc.solve(10, 5));\n"); // حالت a > b
+        sb.append("        assertEquals(-5, calc.solve(5, 10));\n"); // حالت a <= b
+        sb.append("    }\n");
+
+        // تست ACOC برای متد checkLogic (تمام 4 حالت)
+        sb.append("    @Test\n");
+        sb.append("    public void testLogicACOC() {\n");
+        sb.append("        Calculator calc = new Calculator();\n");
+        sb.append("        assertTrue(calc.checkLogic(true, true));\n");   // T, T
+        sb.append("        assertFalse(calc.checkLogic(true, false));\n"); // T, F
+        sb.append("        assertTrue(calc.checkLogic(false, true));\n");  // F, T
+        sb.append("        assertTrue(calc.checkLogic(false, false));\n"); // F, F
+        sb.append("    }\n");
+
+        sb.append("}");
         Files.write(testPath, sb.toString().getBytes());
     }
 
