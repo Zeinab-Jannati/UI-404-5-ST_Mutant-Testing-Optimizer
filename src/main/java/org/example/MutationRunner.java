@@ -1,0 +1,92 @@
+package org.example;
+
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
+
+public class MutationRunner {
+    static String TARGET_PATH;
+    static String BACKUP;
+    static final String MUTANTS_DIR = "mutants";
+
+    public static Map<String, int[]> runAll(String targetPath) throws Exception {
+        TARGET_PATH = targetPath;
+
+        // ایجاد پوشه mutants اگر وجود ندارد (بسیار مهم برای ذخیره بک‌آپ)
+        Files.createDirectories(Paths.get(MUTANTS_DIR));
+
+        // تغییر حیاتی: مسیر بک‌آپ را به بیرون از پوشه src منتقل کردیم
+        // پسوند را .txt گذاشتیم تا کامپایلر جاوا آن را به عنوان کد سورس شناسایی نکند
+        BACKUP = MUTANTS_DIR + "/backup_original.txt";
+
+        Map<String, int[]> result = new HashMap<>();
+
+        // تهیه نسخه پشتیبان از فایل اصلی
+        Files.copy(Path.of(TARGET_PATH), Path.of(BACKUP), StandardCopyOption.REPLACE_EXISTING);
+
+        File dir = new File(MUTANTS_DIR);
+        File[] mutants = dir.listFiles(f -> f.getName().endsWith(".java"));
+
+        if (mutants == null || mutants.length == 0) throw new RuntimeException("No mutants found!");
+
+        for (File mutant : mutants) {
+            String[] parts = mutant.getName().split("_");
+            if (parts.length < 2) continue;
+
+            String operator = parts[1];
+            result.putIfAbsent(operator, new int[]{0, 0});
+            result.get(operator)[1]++;
+
+            System.out.println("▶ Testing " + mutant.getName());
+
+            // کپی کردن میوتنت به جای فایل اصلی برای تست
+            Files.copy(mutant.toPath(), Path.of(TARGET_PATH), StandardCopyOption.REPLACE_EXISTING);
+
+            boolean killed = runTests();
+
+            if (killed) {
+                result.get(operator)[0]++;
+                System.out.println("❌ KILLED");
+            } else {
+                System.out.println("✅ SURVIVED");
+            }
+        }
+
+        // بازگرداندن فایل اصلی
+        Files.copy(Path.of(BACKUP), Path.of(TARGET_PATH), StandardCopyOption.REPLACE_EXISTING);
+        Files.deleteIfExists(Path.of(BACKUP));
+
+        return result;
+    }
+
+    static boolean runTests() throws Exception {
+        // حتما چک کن که این مسیر در سیستم تو درست باشد
+        String mavenPath = "C:\\Program Files\\apache-maven-3.9.11\\bin\\mvn.cmd";
+
+        Process p = new ProcessBuilder(mavenPath, "test")
+                .redirectErrorStream(true)
+                .start();
+
+        StringBuilder output = new StringBuilder();
+        try (BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
+            String line;
+            while ((line = r.readLine()) != null) {
+                output.append(line).append("\n");
+            }
+        }
+
+        p.waitFor();
+        String out = output.toString();
+
+        // در متد runTests داخل کلاس MutationRunner
+        if (out.contains("COMPILATION ERROR")) {
+            System.out.println("\n--- DEBUG: MAVEN COMPILATION ERROR ---");
+            System.out.println(out); // این خط تمام جزئیات ارور را چاپ می‌کند
+            System.out.println("--------------------------------------");
+            return false;
+        }
+
+        // میوتنت زمانی کشته (Killed) محسوب می‌شود که تست‌ها شکست بخورند (BUILD FAILURE)
+        return out.contains("BUILD FAILURE") && out.contains("Tests run:");
+    }
+}
