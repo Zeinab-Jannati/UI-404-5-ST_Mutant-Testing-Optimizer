@@ -9,7 +9,7 @@ public class Calculator {
     }
 
     public boolean checkLogic(boolean A, boolean B) {
-        if (A || B) {
+        if (!(A && B || (A == false))) {
             return true;
         }
         return false;
@@ -25,7 +25,7 @@ public class Calculator {
     }
 
     public int solvee(int a, int b) {
-        if (!(a > 0)) {
+        if (!(!(a > 0))) {
             return a + b;
         }
         return a - b;

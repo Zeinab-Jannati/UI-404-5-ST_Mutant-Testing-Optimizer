@@ -140,4 +140,17 @@ public class Main {
         }
         return totalExecuted == 0 ? 0.0 : (killed * 100.0 / totalExecuted);
     }
+
+    public boolean complexCondition(int a, int b) {
+        if (a > 0 && (b < 5 || b == 100)) {
+            return true;
+        }
+        return false;
+    }
+    public boolean simpleCondition(int a) {
+        if (a > 0) {
+            return true;
+        }
+        return false;
+    }
 }
