@@ -90,41 +90,37 @@ public class Main {
         }
     }
 
-    // ایجاد تست داینامیک عمومی برای Mutant ها
     private static void createGenericAutoTest(String className) throws IOException {
-        // --- اضافه شده: ایجاد مسیر پوشه‌ها قبل از ساخت فایل ---
         Path testPath = Paths.get("src/test/java/org/example/GenericMutationTest.java");
         Files.createDirectories(testPath.getParent());
-        // --------------------------------------------------
 
-        String testContent = "package org.example;\n" +
-                "import org.junit.Test;\n" +
-                "import static org.junit.Assert.*;\n" +
-                "import java.lang.reflect.Method;\n" +
-                "public class GenericMutationTest {\n" +
-                "    @Test\n" +
-                "    public void runDynamicTests() throws Exception {\n" +
-                "        Class<?> clazz = Class.forName(\"org.example." + className + "\");\n" +
-                "        Object instance = clazz.getDeclaredConstructor().newInstance();\n" +
-                "        for (Method m : clazz.getDeclaredMethods()) {\n" +
-                "            if (java.lang.reflect.Modifier.isPublic(m.getModifiers())) {\n" +
-                "                try {\n" +
-                "                    Object[] testInputs = {5, 0, -5, 100};\n" +
-                "                    for(Object input : testInputs) {\n" +
-                "                        Object[] args = new Object[m.getParameterCount()];\n" +
-                "                        for(int i = 0; i < args.length; i++) args[i] = input;\n" +
-                "                        m.invoke(instance, args);\n" +
-                "                    }\n" +
-                "                } catch (Exception e) {\n" +
-                "                    throw new RuntimeException(\"Killed\");\n" +
-                "                }\n" +
-                "            }\n" +
-                "        }\n" +
-                "    }\n" +
-                "}";
+        StringBuilder sb = new StringBuilder();
+        sb.append("package org.example;\n");
+        sb.append("import org.junit.Test;\n");
+        sb.append("import static org.junit.Assert.*;\n");
+        sb.append("import java.lang.reflect.Method;\n");
+        sb.append("public class GenericMutationTest {\n");
+        sb.append("    @Test\n");
+        sb.append("    public void runKillTests() throws Exception {\n");
+        sb.append("        Calculator calc = new Calculator();\n");
+        sb.append("        Method[] methods = calc.getClass().getDeclaredMethods();\n");
+        sb.append("        \n");
+        sb.append("        for (Method m : methods) {\n");
+        sb.append("            if (m.getName().equals(\"solve\")) {\n");
+        sb.append("                // تست اختصاصی برای متد solve\n");
+        sb.append("                assertEquals(\"Killed by solve pos\", 15, (int)m.invoke(calc, 5, 10));\n");
+        sb.append("                assertEquals(\"Killed by solve neg\", 15, (int)m.invoke(calc, -5, 10));\n");
+        sb.append("            }\n");
+        sb.append("            if (m.getName().equals(\"checkLogic\")) {\n");
+        sb.append("                // تست اختصاصی برای متد منطقی\n");
+        sb.append("                assertTrue(\"Killed logic TT\", (boolean)m.invoke(calc, true, true));\n");
+        sb.append("                assertFalse(\"Killed logic FT\", (boolean)m.invoke(calc, false, true));\n");
+        sb.append("            }\n");
+        sb.append("        }\n");
+        sb.append("    }\n");
+        sb.append("}");
 
-        // اصلاح شده: استفاده از متغیر testPath که در بالا تعریف کردیم
-        Files.write(testPath, testContent.getBytes());
+        Files.write(testPath, sb.toString().getBytes());
     }
 
     // محاسبه درصد واقعی Mutation
