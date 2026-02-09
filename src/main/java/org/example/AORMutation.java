@@ -11,57 +11,54 @@ public class AORMutation {
         List<String> lines = Files.readAllLines(Paths.get(filePath));
         int count = 0;
 
-        // ۱. تعریف الگوهای Regex برای شناسایی هوشمند
-        // الگوی Unary: پیدا کردن علامت (+ یا -) که قبل از یک نام متغیر (بدون در نظر گرفتن نام) قرار دارد
-        String unaryRegex = "([+\\-])\\s*([a-zA-Z_$][a-zA-Z\\d_$]*)";
-
-        // الگوی Binary: پیدا کردن عملگرهای اصلی بین دو متغیر یا عدد
-        String binaryRegex = "([a-zA-Z\\d_$]+)\\s*([+\\-*/])\\s*([a-zA-Z\\d_$]+)";
-
         for (int i = 0; i < lines.size(); i++) {
-            String line = lines.get(i);
-            if (line.trim().startsWith("//") || line.trim().isEmpty()) continue; // نادیده گرفتن کامنت و خط خالی
+            String line = lines.get(i).trim();
 
-            // --- بخش اول: مدیریت Unary Operators (مثل -a یا +c) ---
-            java.util.regex.Pattern uPattern = java.util.regex.Pattern.compile(unaryRegex);
-            java.util.regex.Matcher uMatcher = uPattern.matcher(line);
+            if (line.startsWith("//") || line.isEmpty()) continue;
 
-            if (uMatcher.find()) {
-                String currentSign = uMatcher.group(1);
-                String varName = uMatcher.group(2);
+            // --- ۱. تغییر Binary Operators (مثل a + b) ---
+            for (String op : OPS) {
+                int idx = line.indexOf(" " + op + " ");
+                if (idx == -1) continue;
 
-                // معکوس کردن علامت: اگر مثبت بود منفی، اگر منفی بود مثبت
-                String newSign = currentSign.equals("-") ? "+" : "-";
-                String mutated = line.replaceFirst("\\" + currentSign + "\\s*" + varName, newSign + varName);
+                String left = line.substring(0, idx).trim();
+                String right = line.substring(idx + 3).trim(); // 3 = فاصله+عملگر+فاصله
 
-                count++;
-                MutationUtils.saveMutant(lines, i, mutated, "AOR_Unary", count);
-            }
+                // فقط Binary operator بین دو مقدار را تغییر بده، جلوی right اگر Unary بود تغییر نده
+                String rightClean = right;
+                if (right.startsWith("-") || right.startsWith("+")) {
+                    rightClean = right; // نگه داشتن Unary بدون تغییر
+                }
 
-            // --- بخش دوم: مدیریت Binary Operators (مثل a + b) ---
-            java.util.regex.Pattern bPattern = java.util.regex.Pattern.compile(binaryRegex);
-            java.util.regex.Matcher bMatcher = bPattern.matcher(line);
-
-            if (bMatcher.find()) {
-                String leftPart = bMatcher.group(1);
-                String currentOp = bMatcher.group(2);
-                String rightPart = bMatcher.group(3);
-
-                String[] allOps = {"+", "-", "*", "/"};
-                for (String repOp : allOps) {
-                    if (!currentOp.equals(repOp)) {
-                        // جایگزینی فقط عملگر وسط با حفظ طرفین
-                        String mutated = line.replaceFirst(
-                                java.util.regex.Pattern.quote(leftPart) + "\\s*\\" + currentOp + "\\s*" + java.util.regex.Pattern.quote(rightPart),
-                                leftPart + " " + repOp + " " + rightPart
-                        );
-
+                for (String repOp : OPS) {
+                    if (!op.equals(repOp)) {
+                        // جایگزینی عملگر بدون تغییر Unary جلوی right
+                        String mutated = left + " " + repOp + " " + rightClean;
                         count++;
                         MutationUtils.saveMutant(lines, i, mutated, "AOR_Binary", count);
                     }
                 }
             }
+
+            // --- ۲. تغییر Unary Operators (مثل -a یا +b) ---
+            // فقط زمانی اعمال شود که جلوی متغیر یک Unary مستقل باشد
+            String unaryRegex = "(?<!\\S)([+\\-])([a-zA-Z_$][a-zA-Z\\d_$]*)";
+            java.util.regex.Pattern uPattern = java.util.regex.Pattern.compile(unaryRegex);
+            java.util.regex.Matcher uMatcher = uPattern.matcher(line);
+
+            while (uMatcher.find()) {
+                String currentSign = uMatcher.group(1);
+                String varName = uMatcher.group(2);
+
+                String newSign = currentSign.equals("-") ? "+" : "-";
+
+                // جایگزینی علامت بدون دستکاری بقیه خط
+                String mutated = line.substring(0, uMatcher.start(1)) + newSign + line.substring(uMatcher.start(2));
+                count++;
+                MutationUtils.saveMutant(lines, i, mutated, "AOR_Unary", count);
+            }
         }
+
         System.out.println("AOR Operator: " + count + " smart mutants generated.");
         return count;
     }

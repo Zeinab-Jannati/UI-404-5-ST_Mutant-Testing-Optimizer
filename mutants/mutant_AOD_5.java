@@ -21,6 +21,6 @@ public class Calculator {
 
 
     public int internalProcess(int m, int n) {
-        return m * n;
+        return m;
     }
 }
