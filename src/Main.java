@@ -17,6 +17,13 @@ public class Main {
         System.out.println("  4. COR");
         System.out.println("  5. COI");
         System.out.println("  6. COD");
+        System.out.println("  7. LOD");
+        System.out.println("  8. LOI");
+        System.out.println("  9. LOR");
+        System.out.println("  10. ROR");
+        System.out.println("  11. SDL");
+        System.out.println("  12. SOR");
+
         System.out.println("\nIntegration Operators (Chapter 9.2):");
         System.out.println("  13. IPVR");
         System.out.println("  14. IUOI");
@@ -25,62 +32,112 @@ public class Main {
         System.out.println("  17. IREM");
         System.out.println("  12. ALL INTEGRATION OPERATORS (13-17)");
         System.out.println("  18. ALL OPERATORS (1-17)");
+
+
         System.out.print("\nYour choice: ");
 
         String input = scanner.nextLine().trim();
+        input = input.replaceAll("\\s+", "");
+        String[] selections = input.split(",");
+
+
 
         int traditionalTotal = 0;
         int integrationTotal = 0;
+
         int aod=0, aor=0, aoi=0, cor=0, coi=0, cod=0;
+        int lod = 0, loi = 0, lor = 0, ror = 0, sdl = 0, sor = 0;
         int ipvr = 0, iuoi = 0, ipex = 0, imcd = 0, irem = 0;
+
+
 
         try {
             System.out.println("\nGENERATING MUTANTS...");
 
 
-            if (input.equals("1") || input.equals("18") || input.contains("1,")) {
+            if (isSelected(selections,"1") || isSelected(selections,"18")) {
                 aod = AODMutation.applyAOD(targetPath);
                 traditionalTotal += aod;
             }
-            if (input.equals("2") || input.equals("18") || input.contains("2,")) {
+
+            if (isSelected(selections,"2") || isSelected(selections,"18")) {
                 aor = AORMutation.applyAOR(targetPath);
                 traditionalTotal += aor;
             }
-            if (input.equals("3") || input.equals("18") || input.contains("3,")) {
+
+            if (isSelected(selections,"3") || isSelected(selections,"18")) {
                 aoi = AOIMutation.applyAOI(targetPath);
                 traditionalTotal += aoi;
             }
-            if (input.equals("4") || input.equals("18") || input.contains("4,")) {
+
+            if (isSelected(selections,"4") || isSelected(selections,"18")) {
                 cor = CORMutation.applyCOR(targetPath);
                 traditionalTotal += cor;
             }
-            if (input.equals("5") || input.equals("18") || input.contains("5,")) {
+
+            if (isSelected(selections,"5") || isSelected(selections,"18")) {
                 coi = COIMutation.applyCOI(targetPath);
                 traditionalTotal += coi;
             }
-            if (input.equals("6") || input.equals("18") || input.contains("6,")) {
+
+            if (isSelected(selections,"6") || isSelected(selections,"18")) {
                 cod = CODMutation.applyCOD(targetPath);
                 traditionalTotal += cod;
             }
 
+            if (isSelected(selections,"7") || isSelected(selections,"18")) {
+                lod = LODMutation.applyLOD(targetPath);
+                traditionalTotal += lod;
+            }
 
-            if (input.contains("13") || input.contains("12") || input.contains("18")) {
+            if (isSelected(selections,"8") || isSelected(selections,"18")) {
+                loi = LOIMutation.applyLOI(targetPath);
+                traditionalTotal += loi;
+            }
+
+            if (isSelected(selections,"9") || isSelected(selections,"18")) {
+                lor = LORMutation.applyLOR(targetPath);
+                traditionalTotal += lor;
+            }
+
+            if (isSelected(selections,"10") || isSelected(selections,"18")) {
+                ror = RORMutation.applyROR(targetPath);
+                traditionalTotal += ror;
+            }
+
+            if (isSelected(selections,"11") || isSelected(selections,"18")) {
+                sdl = SDLMutation.applySDL(targetPath);
+                traditionalTotal += sdl;
+            }
+
+            if (isSelected(selections,"12") || isSelected(selections,"18")) {
+                sor = SORMutation.applySOR(targetPath);
+                traditionalTotal += sor;
+            }
+
+            // ===== Integration =====
+
+            if (isSelected(selections,"13") || isSelected(selections,"18") || isSelected(selections,"19")) {
                 ipvr = IPVR_Mutation.applyIPVR(targetPath);
                 integrationTotal += ipvr;
             }
-            if (input.contains("14") || input.contains("12") || input.contains("18")) {
+
+            if (isSelected(selections,"14") || isSelected(selections,"18") || isSelected(selections,"19")) {
                 iuoi = IUOI_Mutation.applyIUOI(targetPath);
                 integrationTotal += iuoi;
             }
-            if (input.contains("15") || input.contains("12") || input.contains("18")) {
+
+            if (isSelected(selections,"15") || isSelected(selections,"18") || isSelected(selections,"19")) {
                 ipex = IPEX_Mutation.applyIPEX(targetPath);
                 integrationTotal += ipex;
             }
-            if (input.contains("16") || input.contains("12") || input.contains("18")) {
+
+            if (isSelected(selections,"16") || isSelected(selections,"18") || isSelected(selections,"19")) {
                 imcd = IMCD_Mutation.applyIMCD(targetPath);
                 integrationTotal += imcd;
             }
-            if (input.contains("17") || input.contains("12") || input.contains("18")) {
+
+            if (isSelected(selections,"17") || isSelected(selections,"18") || isSelected(selections,"19")) {
                 irem = IREM_Mutation.applyIREM(targetPath);
                 integrationTotal += irem;
             }
@@ -89,6 +146,21 @@ public class Main {
             System.out.println("Traditional Mutants: " + traditionalTotal);
             System.out.println("Integration Mutants: " + integrationTotal);
             System.out.println("Total Mutants: " + (traditionalTotal + integrationTotal));
+
+            System.out.println("\n--- Traditional Details ---");
+            System.out.println("AOD: " + aod);
+            System.out.println("AOI: " + aoi);
+            System.out.println("AOR: " + aor);
+            System.out.println("COR: " + cor);
+            System.out.println("COI: " + coi);
+            System.out.println("COD: " + cod);
+            System.out.println("LOD: " + lod);
+            System.out.println("LOI: " + loi);
+            System.out.println("LOR: " + lor);
+            System.out.println("ROR: " + ror);
+            System.out.println("SDL: " + sdl);
+            System.out.println("SOR: " + sor);
+
 
             System.out.println("\nPHASE 2: TEST GENERATION (ACOC METHOD)");
 
@@ -130,5 +202,13 @@ public class Main {
         } finally {
             scanner.close();
         }
+    }
+    private static boolean isSelected(String[] selections, String option) {
+        for (String s : selections) {
+            if (s.trim().equals(option)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
