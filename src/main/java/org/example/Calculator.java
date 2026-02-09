@@ -2,7 +2,7 @@ package org.example;
 
 public class Calculator {
     public int solve(int a, int b) {
-        if (a > 0) {
+        if (true) {
             return a + b;
         }
         return a - b;
@@ -22,5 +22,12 @@ public class Calculator {
 
     public int internalProcess(int m, int n) {
         return m * n;
+    }
+
+    public int solvee(int a, int b) {
+        if (!(a > 0)) {
+            return a + b;
+        }
+        return a - b;
     }
 }
