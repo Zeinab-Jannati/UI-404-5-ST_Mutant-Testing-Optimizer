@@ -9,7 +9,7 @@ public class Calculator {
     }
 
     public boolean checkLogic(boolean A, boolean B) {
-        if (A && B || (A == false)) {
+        if (A || B || (A == false)) {
             return true;
         }
         return false;
@@ -18,7 +18,7 @@ public class Calculator {
         return n << 2;
     }
     public int calculateSum(int x, int y) {
-        return internalProcess(x, y);
+        return internalProcess(-x, y);
     }
 
     public int internalProcess(int m, int n) {

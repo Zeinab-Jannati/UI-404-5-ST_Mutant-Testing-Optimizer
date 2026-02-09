@@ -5,28 +5,49 @@ import java.nio.file.*;
 import java.util.List;
 
 public class CORMutation {
+
     public static int applyCOR(String filePath) throws IOException {
         List<String> lines = Files.readAllLines(Paths.get(filePath));
         int count = 0;
 
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i);
+            String trimmed = line.trim();
 
-            // تعویض AND با OR (با رعایت فواصل برای امنیت بیشتر)
-            if (line.contains("&&")) {
-                String mutated = line.replace("&&", "||");
-                count++;
-                MutationUtils.saveMutant(lines, i, mutated, "COR", count);
-            }
+            // نادیده گرفتن کامنت‌ها و خطوط غیر شرطی
+            if (trimmed.startsWith("//") || (!trimmed.contains("if") && !trimmed.contains("while") && !trimmed.contains("for")))
+                continue;
 
-            // تعویض OR با AND
-            if (line.contains("||")) {
-                String mutated = line.replace("||", "&&");
-                count++;
-                MutationUtils.saveMutant(lines, i, mutated, "COR", count);
+            // پیدا کردن اولین '(' و آخرین ')' در شرط
+            int firstParen = line.indexOf('(');
+            int lastParen = line.lastIndexOf(')');
+
+            if (firstParen == -1 || lastParen == -1 || lastParen <= firstParen) continue;
+
+            String prefix = line.substring(0, firstParen + 1);
+            String condition = line.substring(firstParen + 1, lastParen);
+            String suffix = line.substring(lastParen);
+
+            // --- تولید mutantها ---
+            // هر occurrence از && یا || یک mutant جدا
+            for (int j = 0; j < condition.length() - 1; j++) {
+                String op = condition.substring(j, j + 2);
+                if (op.equals("&&") || op.equals("||")) {
+                    String mutatedCondition;
+                    if (op.equals("&&")) {
+                        mutatedCondition = condition.substring(0, j) + "||" + condition.substring(j + 2);
+                        count++;
+                        MutationUtils.saveMutant(lines, i, prefix + mutatedCondition + suffix, "COR_AND", count);
+                    } else {
+                        mutatedCondition = condition.substring(0, j) + "&&" + condition.substring(j + 2);
+                        count++;
+                        MutationUtils.saveMutant(lines, i, prefix + mutatedCondition + suffix, "COR_OR", count);
+                    }
+                }
             }
         }
-        System.out.println("COR Operator: " + count + " mutants generated.");
+
+        System.out.println("Advanced COR: " + count + " mutants generated.");
         return count;
     }
 }

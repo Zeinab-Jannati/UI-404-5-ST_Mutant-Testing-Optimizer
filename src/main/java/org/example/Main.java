@@ -33,14 +33,13 @@ public class Main {
             Files.copy(sourceFile.toPath(), destPath, StandardCopyOption.REPLACE_EXISTING);
 
             createGenericAutoTest(className);
-            System.out.println("✅ Successfully loaded " + fileName + " and generated Smart Test Suite.");
+            System.out.println("Successfully loaded " + fileName + " and generated Smart Test Suite.");
 
         } catch (IOException e) {
             System.out.println("ERROR during file setup: " + e.getMessage());
             return;
         }
 
-        // 2. انتخاب اپراتورها
         System.out.println("\nPHASE 1: MUTANT GENERATION");
         System.out.println("Traditional: 1.AOD, 2.AOR, 3.AOI, 4.COR, 5.COI, 6.COD, 7.LOD, 8.LOI, 9.LOR, 10.ROR, 11.SDL, 12.SOR");
         System.out.print("\nYour choice (e.g., 18 for ALL): ");
@@ -48,7 +47,7 @@ public class Main {
         String input = scanner.nextLine().trim();
 
         try {
-            System.out.println("\n🛠 GENERATING MUTANTS FOR " + fileName + "...");
+            System.out.println("\n GENERATING MUTANTS FOR " + fileName + "...");
 
             switch (input) {
                 case "1" -> AODMutation.applyAOD(targetPath);
@@ -81,7 +80,7 @@ public class Main {
             }
 
             // 3. اجرای Mutant ها
-            System.out.println("\n🚀 PHASE 2: EXECUTION (SMART TEST ENGINE)");
+            System.out.println("\n PHASE 2: EXECUTION (SMART TEST ENGINE)");
             Map<String, int[]> realResults = MutationRunner.runAll(targetPath);
 
             TestExecutor.showTraditionalReport(realResults);
@@ -97,7 +96,7 @@ public class Main {
             double finalScore = (traditionalScore * 0.4) + (integrationScore * 0.6);
             System.out.println("\nFINAL SCORE FOR " + fileName + ": " + String.format("%.2f", finalScore) + "%");
 
-            System.out.println("\n🤖 PHASE 3: AI TEST SUITE MINIMIZATION");
+            System.out.println("\n PHASE 3: AI TEST SUITE MINIMIZATION");
             SmartTestGenerator.optimizeTestSuite(MutationRunner.getDetailedResults());
 
         } catch (Exception e) {

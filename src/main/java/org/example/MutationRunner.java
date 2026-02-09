@@ -46,9 +46,9 @@ public class MutationRunner {
 
             if (killed) {
                 result.get(operator)[0]++;
-                System.out.println("❌ KILLED");
+                System.out.println("KILLED");
             } else {
-                System.out.println("✅ SURVIVED");
+                System.out.println("SURVIVED");
             }
         }
 
