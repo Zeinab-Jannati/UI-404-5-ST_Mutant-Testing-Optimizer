@@ -42,7 +42,7 @@ public class Main {
 
         // 2. انتخاب اپراتورها
         System.out.println("\nPHASE 1: MUTANT GENERATION");
-        System.out.println("Traditional: 1.AOD, 2.AOR, 3.AOI, 4.COR, 5.COI, 6.COD, 7.ROR");
+        System.out.println("Traditional: 1.AOD, 2.AOR, 3.AOI, 4.COR, 5.COI, 6.COD, 7.LOD, 8.LOI, 9.LOR, 10.ROR, 11.SDL, 12.SOR");
         System.out.print("\nYour choice (e.g., 18 for ALL): ");
 
         String input = scanner.nextLine().trim();
@@ -57,6 +57,12 @@ public class Main {
             if (input.contains("4") || input.contains("18")) CORMutation.applyCOR(targetPath);
             if (input.contains("5") || input.contains("18")) COIMutation.applyCOI(targetPath);
             if (input.contains("6") || input.contains("18")) CODMutation.applyCOD(targetPath);
+            if (input.contains("7") || input.contains("18")) AODMutation.applyAOD(targetPath);
+            if (input.contains("8") || input.contains("18")) AORMutation.applyAOR(targetPath);
+            if (input.contains("9") || input.contains("18")) AOIMutation.applyAOI(targetPath);
+            if (input.contains("10") || input.contains("18")) CORMutation.applyCOR(targetPath);
+            if (input.contains("11") || input.contains("18")) COIMutation.applyCOI(targetPath);
+            if (input.contains("12") || input.contains("18")) CODMutation.applyCOD(targetPath);
             // Integration Mutations
             if (input.contains("13") || input.contains("18")) IPVR_Mutation.applyIPVR(targetPath);
             if (input.contains("14") || input.contains("18")) IUOI_Mutation.applyIUOI(targetPath);
@@ -74,7 +80,7 @@ public class Main {
             TestExecutor.showIntegrationReport(realResults);
 
             double traditionalScore = calculateRealScore(realResults, new String[]{
-                    "AOD", "AOR", "AOI", "COR", "COI", "COD", "ROR"
+                    "AOD", "AOR", "AOI", "COR", "COI", "COD", "LOD", "LOI", "LOR", "ROR", "SDL", "SOR"
             });
             double integrationScore = calculateRealScore(realResults, new String[]{
                     "IPVR", "IUOI", "IPEX", "IMCD", "IREM"

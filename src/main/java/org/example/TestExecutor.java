@@ -13,7 +13,7 @@ public class TestExecutor {
         System.out.println(" Operator    Mutants Generated   Killed/Total   Mutation Score   Status");
         System.out.println(" --------    ----------------   ------------   --------------   -------");
 
-        String[] ops = {"AOD", "AOR", "AOI", "COR", "COI", "COD"};
+        String[] ops = {"AOD", "AOR", "AOI", "COR", "COI", "COD", "LOD", "LOI", "LOR", "ROR", "SDL", "SOR"};
         int totalMutants = 0;
         int totalKilled = 0;
 
