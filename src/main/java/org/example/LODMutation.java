@@ -1,9 +1,9 @@
 package org.example;
 
 import java.io.IOException;
-        import java.nio.file.Files;
-        import java.nio.file.Paths;
-        import java.util.List;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
 
 public class LODMutation {
 
@@ -13,42 +13,35 @@ public class LODMutation {
         int count = 0;
 
         for (int i = 0; i < lines.size(); i++) {
-            String line = lines.get(i).trim();
 
-            // ⛔ کامنت‌ها رو رد کن
-            if (line.startsWith("//")) {
-                continue;
-            }
+            String line = lines.get(i);
+            String trimmed = line.trim();
 
-            if (line.contains("&&") || line.contains("||")) {
+            if (trimmed.startsWith("//")) continue;
 
-                String operator = line.contains("&&") ? "&&" : "||";
+            if (!trimmed.startsWith("if") && !trimmed.startsWith("while")) continue;
 
-                int start = line.indexOf("(");
-                int end = line.indexOf(")");
+            int open = line.indexOf('(');
+            int close = line.lastIndexOf(')');
 
-                if (start != -1 && end != -1) {
+            if (open == -1 || close == -1 || close <= open) continue;
 
-                    String condition = line.substring(start + 1, end);
-                    String[] parts = condition.split("\\Q" + operator + "\\E");
+            String prefix = line.substring(0, open + 1);
+            String condition = line.substring(open + 1, close);
+            String suffix = line.substring(close);
 
-                    if (parts.length == 2) {
+            String operator = null;
 
-                        // Mutant 1
-                        count++;
-                        String mutated1 = line.substring(0, start + 1)
-                                + parts[0].trim()
-                                + line.substring(end);
-                        MutationUtils.saveMutant(lines, i, mutated1, "LOD", count);
+            if (condition.contains("||")) operator = "\\|\\|";
+            else if (condition.contains("&&")) operator = "&&";
+            else continue;
 
-                        // Mutant 2
-                        count++;
-                        String mutated2 = line.substring(0, start + 1)
-                                + parts[1].trim()
-                                + line.substring(end);
-                        MutationUtils.saveMutant(lines, i, mutated2, "LOD", count);
-                    }
-                }
+            String[] operands = condition.split("\\s*" + operator + "\\s*");
+
+            for (String operand : operands) {
+                String mutatedLine = prefix + operand.trim() + suffix;
+                count++;
+                MutationUtils.saveMutant(lines, i, mutatedLine, "LOD", count);
             }
         }
 

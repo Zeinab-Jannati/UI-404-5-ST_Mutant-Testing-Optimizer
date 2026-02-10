@@ -9,7 +9,7 @@ public class Calculator {
     }
 
     public boolean checkLogic(boolean A, boolean B) {
-        if (A && B || (A == false)) {
+        if (A) {
             return true;
         }
         return false;

@@ -14,11 +14,9 @@ public class CORMutation {
             String line = lines.get(i);
             String trimmed = line.trim();
 
-            // نادیده گرفتن کامنت‌ها و خطوط غیر شرطی
             if (trimmed.startsWith("//") || (!trimmed.contains("if") && !trimmed.contains("while") && !trimmed.contains("for")))
                 continue;
 
-            // پیدا کردن اولین '(' و آخرین ')' در شرط
             int firstParen = line.indexOf('(');
             int lastParen = line.lastIndexOf(')');
 
@@ -28,8 +26,6 @@ public class CORMutation {
             String condition = line.substring(firstParen + 1, lastParen);
             String suffix = line.substring(lastParen);
 
-            // --- تولید mutantها ---
-            // هر occurrence از && یا || یک mutant جدا
             for (int j = 0; j < condition.length() - 1; j++) {
                 String op = condition.substring(j, j + 2);
                 if (op.equals("&&") || op.equals("||")) {
