@@ -2,8 +2,8 @@ package org.example;
 
 public class Calculator {
     public int solve(int a, int b) {
-        if (a != b) {
-            return a + b;
+        if (a > b) {
+// deleted statement
         }
         return a - b;
     }

@@ -9,7 +9,7 @@ public class Calculator {
     }
 
     public boolean checkLogic(boolean A, boolean B) {
-        if (A || B || (A != false)) {
+        if (A || B || (A == false)) {
             return true;
         }
         return false;
@@ -22,7 +22,7 @@ public class Calculator {
     }
 
     public int internalProcess(int m, int n) {
-        return m * n;
+// deleted statement
     }
 
 }

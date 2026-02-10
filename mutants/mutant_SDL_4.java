@@ -2,7 +2,7 @@ package org.example;
 
 public class Calculator {
     public int solve(int a, int b) {
-        if (a <= b) {
+        if (a > b) {
             return a + b;
         }
         return a - b;
@@ -12,7 +12,7 @@ public class Calculator {
         if (A || B || (A == false)) {
             return true;
         }
-        return false;
+// deleted statement
     }
     public int bitwiseOperation(int n) {
         return n << 2;
