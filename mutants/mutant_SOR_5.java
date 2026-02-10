@@ -14,15 +14,18 @@ public class Calculator {
         }
         return false;
     }
+
     public int bitwiseOperation(int n) {
-// deleted statement
+        return n << 2;
     }
+
     public int calculateSum(int x, int y) {
-        return internalProcess(-x, y);
+return internalProcess(+x, y);
     }
 
     public int internalProcess(int m, int n) {
         return m * n;
     }
+
 
 }

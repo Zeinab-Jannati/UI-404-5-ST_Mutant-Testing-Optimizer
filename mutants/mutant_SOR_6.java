@@ -3,7 +3,7 @@ package org.example;
 public class Calculator {
     public int solve(int a, int b) {
         if (a > b) {
-// deleted statement
+            return a + b;
         }
         return a - b;
     }
@@ -14,15 +14,18 @@ public class Calculator {
         }
         return false;
     }
+
     public int bitwiseOperation(int n) {
         return n << 2;
     }
+
     public int calculateSum(int x, int y) {
         return internalProcess(-x, y);
     }
 
     public int internalProcess(int m, int n) {
-        return m * n;
+return m + n;
     }
+
 
 }
