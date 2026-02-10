@@ -1,57 +1,49 @@
 package org.example;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.nio.file.*;
+import java.util.*;
+import java.util.regex.*;
 
 public class IPVR_Mutation {
+
     public static int applyIPVR(String filePath) throws IOException {
         List<String> lines = Files.readAllLines(Paths.get(filePath));
         int mutantCount = 0;
 
+        Pattern methodPattern = Pattern.compile("(public|private|protected)?\\s+\\w+\\s+(\\w+)\\s*\\(([^)]*,[^)]*)\\)");
+
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i);
+            Matcher matcher = methodPattern.matcher(line);
 
-            if (line.contains("solve(")) {
-                if (line.contains("solve(a, b)")) {
-                    mutantCount++;
-                    String mutated = line.replace("solve(a, b)", "solve(b, a)");
-                    MutationUtils.saveMutant(lines, i, mutated, "IPVR", mutantCount);
-                }
-                if (line.contains("solve(x, y)")) {
-                    mutantCount++;
-                    String mutated = line.replace("solve(x, y)", "solve(y, x)");
-                    MutationUtils.saveMutant(lines, i, mutated, "IPVR", mutantCount);
-                }
-                Pattern pattern = Pattern.compile("solve\\(\\s*(\\w+)\\s*,\\s*(\\w+)\\s*\\)");
-                Matcher matcher = pattern.matcher(line);
-                if (matcher.find() && !line.contains("solve(a, b)") && !line.contains("solve(x, y)")) {
-                    mutantCount++;
-                    String param1 = matcher.group(1);
-                    String param2 = matcher.group(2);
-                    String mutated = line.replace("solve(" + param1 + ", " + param2 + ")",
-                            "solve(" + param2 + ", " + param1 + ")");
-                    MutationUtils.saveMutant(lines, i, mutated, "IPVR", mutantCount);
-                }
-            }
+            if (matcher.find()) {
+                String methodName = matcher.group(2);
+                String params = matcher.group(3).trim();
 
-            if (line.contains("calculateSum(")) {
-                Pattern pattern = Pattern.compile("calculateSum\\(\\s*(\\w+)\\s*,\\s*(\\w+)\\s*\\)");
-                Matcher matcher = pattern.matcher(line);
-                if (matcher.find()) {
+                String[] paramArr = params.split("\\s*,\\s*");
+                if (paramArr.length > 1) {
+                    String swappedParams = paramArr[1] + ", " + paramArr[0];
+                    String mutatedLine = line.replace("(" + params + ")", "(" + swappedParams + ")");
                     mutantCount++;
-                    String param1 = matcher.group(1);
-                    String param2 = matcher.group(2);
-                    String mutated = line.replace("calculateSum(" + param1 + ", " + param2 + ")",
-                            "calculateSum(" + param2 + ", " + param1 + ")");
-                    MutationUtils.saveMutant(lines, i, mutated, "IPVR", mutantCount);
+                    saveMutant(lines, i, mutatedLine, "IPVR", mutantCount);
                 }
             }
         }
+
         System.out.println("IPVR Operator: " + mutantCount + " mutants generated.");
         return mutantCount;
+    }
+
+    private static void saveMutant(List<String> originalLines, int mutatedLineIndex, String mutatedContent,
+                                   String opName, int count) throws IOException {
+        List<String> mutantContent = new ArrayList<>(originalLines);
+        mutantContent.set(mutatedLineIndex, mutatedContent);
+
+        Path mutantFolder = Paths.get("mutants");
+        if (!Files.exists(mutantFolder)) Files.createDirectories(mutantFolder);
+
+        String fileName = "mutant_" + opName + "_" + count + ".java";
+        Files.write(mutantFolder.resolve(fileName), mutantContent);
     }
 }
