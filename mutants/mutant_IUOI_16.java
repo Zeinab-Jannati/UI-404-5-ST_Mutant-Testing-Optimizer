@@ -16,7 +16,7 @@ public class Calculator {
     }
 
     public int bitwiseOperation(int n) {
-        return n << 2;
+        return +n << 2;
     }
 
     public int calculateSum(int x, int y) {

@@ -2,7 +2,9 @@ package org.example;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 public class IMCD_Mutation {
@@ -15,26 +17,20 @@ public class IMCD_Mutation {
             String line = lines.get(i);
             String trimmedLine = line.trim();
 
-            // =====================
-            // Case 1: return solve(...)
-            // =====================
             if (trimmedLine.matches("return\\s+solve\\s*\\(.*\\)\\s*;")) {
                 mutantCount++;
                 String mutated0 = line.replaceAll("return\\s+solve\\s*\\(.*\\)\\s*;", "return 0;");
                 if (!mutated0.equals(line)) {
-                    MutationUtils.saveMutant(lines, i, mutated0, "IMCD", mutantCount);
+                    saveMutant(lines, i, mutated0, "IMCD", mutantCount);
                 }
 
                 mutantCount++;
                 String mutated1 = line.replaceAll("return\\s+solve\\s*\\(.*\\)\\s*;", "return 1;");
                 if (!mutated1.equals(line)) {
-                    MutationUtils.saveMutant(lines, i, mutated1, "IMCD", mutantCount);
+                    saveMutant(lines, i, mutated1, "IMCD", mutantCount);
                 }
             }
 
-            // =====================
-            // Case 2: solve(...) used as argument or statement
-            // =====================
             if (trimmedLine.contains("solve(") && !trimmedLine.startsWith("return")) {
                 // Extract first argument
                 mutantCount++;
@@ -54,5 +50,15 @@ public class IMCD_Mutation {
 
         System.out.println("IMCD Operator: " + mutantCount + " mutants generated.");
         return mutantCount;
+    }
+    private static void saveMutant(List<String> originalLines, int mutatedLineIndex, String mutatedContent, String opName, int count) throws IOException {
+        List<String> mutantContent = new ArrayList<>(originalLines);
+        mutantContent.set(mutatedLineIndex, mutatedContent);
+
+        Path mutantFolder = Paths.get("mutants");
+        if (!Files.exists(mutantFolder)) Files.createDirectories(mutantFolder);
+
+        String fileName = "mutant_" + opName + "_" + count + ".java";
+        Files.write(mutantFolder.resolve(fileName), mutantContent);
     }
 }

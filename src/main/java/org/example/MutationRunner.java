@@ -5,6 +5,12 @@ import java.nio.file.*;
 import java.util.*;
 
 public class MutationRunner {
+    enum TestResult {
+        KILLED,
+        SURVIVED,
+        COMPILE_ERROR
+    }
+
     static String TARGET_PATH;
     static String BACKUP;
     static final String MUTANTS_DIR = "mutants";
@@ -23,7 +29,8 @@ public class MutationRunner {
         File dir = new File(MUTANTS_DIR);
         File[] mutants = dir.listFiles(f -> f.getName().endsWith(".java"));
 
-        if (mutants == null || mutants.length == 0) throw new RuntimeException("No mutants found!");
+        if (mutants == null || mutants.length == 0)
+            throw new RuntimeException("No mutants found!");
 
         for (File mutant : mutants) {
             String[] parts = mutant.getName().split("_");
@@ -31,15 +38,21 @@ public class MutationRunner {
 
             String operator = parts[1];
             result.putIfAbsent(operator, new int[]{0, 0});
-            result.get(operator)[1]++;
 
             System.out.println("▶ Testing " + mutant.getName());
 
             Files.copy(mutant.toPath(), Path.of(TARGET_PATH), StandardCopyOption.REPLACE_EXISTING);
 
-            boolean killed = runTests();
+            TestResult testResult = runTests();
 
-            if (killed) {
+            if (testResult == TestResult.COMPILE_ERROR) {
+                System.out.println("INVALID (COMPILE ERROR)");
+                continue; // ❗ مهم: نه killed نه survived
+            }
+
+            result.get(operator)[1]++; // فقط mutant معتبر شمرده می‌شود
+
+            if (testResult == TestResult.KILLED) {
                 result.get(operator)[0]++;
                 System.out.println("KILLED");
             } else {
@@ -53,7 +66,7 @@ public class MutationRunner {
         return result;
     }
 
-    static boolean runTests() throws Exception {
+    static TestResult runTests() throws Exception {
         String mavenPath = "C:\\Program Files\\apache-maven-3.9.11\\bin\\mvn.cmd";
 
         Process p = new ProcessBuilder(mavenPath, "test")
@@ -68,18 +81,32 @@ public class MutationRunner {
             }
         }
 
-        p.waitFor();
+        int exitCode = p.waitFor();
         String out = output.toString();
 
+        // 1️⃣ compile error → INVALID
         if (out.contains("COMPILATION ERROR")) {
             System.out.println("\n--- DEBUG: MAVEN COMPILATION ERROR ---");
             System.out.println(out);
             System.out.println("--------------------------------------");
-            return false;
+            return TestResult.COMPILE_ERROR;
         }
 
-        return out.contains("BUILD FAILURE") && out.contains("Tests run:");
+        // 2️⃣ tests failed → KILLED
+        if (out.contains("Tests run:") && out.contains("Failures:") && !out.contains("Failures: 0")) {
+            return TestResult.KILLED;
+        }
+
+        // 3️⃣ tests passed
+        if (exitCode == 0) {
+            return TestResult.SURVIVED;
+        }
+
+        // fallback (safety)
+        return TestResult.COMPILE_ERROR;
     }
+
+
     public static Map<String, List<Integer>> getDetailedResults() {
         Map<String, List<Integer>> detailed = new HashMap<>();
 

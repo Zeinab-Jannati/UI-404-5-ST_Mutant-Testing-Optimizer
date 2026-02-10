@@ -12,7 +12,7 @@ public class Calculator {
         if (A || B || (A == false)) {
             return true;
         }
-        return false;
+        return !false;
     }
 
     public int bitwiseOperation(int n) {

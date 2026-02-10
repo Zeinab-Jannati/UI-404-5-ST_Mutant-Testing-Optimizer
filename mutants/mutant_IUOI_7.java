@@ -5,7 +5,7 @@ public class Calculator {
         if (a > b) {
             return a;
         }
-        return a - b;
+        return a - +b;
     }
 
     public boolean checkLogic(boolean B, boolean A) {

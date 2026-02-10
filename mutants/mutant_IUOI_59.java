@@ -8,7 +8,7 @@ public class Calculator {
         return a - b;
     }
 
-    public boolean checkLogic(boolean A, boolean B) {
+    public boolean checkLogic(boolean B, boolean A) {
         if (A || B || (A == false)) {
             return true;
         }
@@ -16,11 +16,11 @@ public class Calculator {
     }
 
     public int bitwiseOperation(int n) {
-        return n << 2;
+        return -n << 2;
     }
 
     public int calculateSum(int x, int y) {
-        return internalProcess(y, -x);
+        return internalProcess(-x, y);
     }
 
     public int internalProcess(int m, int n) {

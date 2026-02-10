@@ -3,7 +3,7 @@ package org.example;
 public class Calculator {
     public int solve(int b, int a) {
         if (a > b) {
-            return a;
+            return -a;
         }
         return a - b;
     }
