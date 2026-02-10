@@ -16,15 +16,12 @@ public class LORMutation {
 
             String originalLine = lines.get(i);
 
-            // رد کردن کامنت
             if (originalLine.trim().startsWith("//")) {
                 continue;
             }
 
-            // بررسی وجود عملگر منطقی
             if (originalLine.contains("&&") || originalLine.contains("||")) {
 
-                // روی هر کاراکتر حرکت می‌کنیم
                 for (int idx = 0; idx < originalLine.length() - 1; idx++) {
 
                     String sub = originalLine.substring(idx, idx + 2);

@@ -12,16 +12,12 @@ public class MutationRunner {
     public static Map<String, int[]> runAll(String targetPath) throws Exception {
         TARGET_PATH = targetPath;
 
-        // ایجاد پوشه mutants اگر وجود ندارد (بسیار مهم برای ذخیره بک‌آپ)
         Files.createDirectories(Paths.get(MUTANTS_DIR));
 
-        // تغییر حیاتی: مسیر بک‌آپ را به بیرون از پوشه src منتقل کردیم
-        // پسوند را .txt گذاشتیم تا کامپایلر جاوا آن را به عنوان کد سورس شناسایی نکند
         BACKUP = MUTANTS_DIR + "/backup_original.txt";
 
         Map<String, int[]> result = new HashMap<>();
 
-        // تهیه نسخه پشتیبان از فایل اصلی
         Files.copy(Path.of(TARGET_PATH), Path.of(BACKUP), StandardCopyOption.REPLACE_EXISTING);
 
         File dir = new File(MUTANTS_DIR);
@@ -39,7 +35,6 @@ public class MutationRunner {
 
             System.out.println("▶ Testing " + mutant.getName());
 
-            // کپی کردن میوتنت به جای فایل اصلی برای تست
             Files.copy(mutant.toPath(), Path.of(TARGET_PATH), StandardCopyOption.REPLACE_EXISTING);
 
             boolean killed = runTests();
@@ -52,7 +47,6 @@ public class MutationRunner {
             }
         }
 
-        // بازگرداندن فایل اصلی
         Files.copy(Path.of(BACKUP), Path.of(TARGET_PATH), StandardCopyOption.REPLACE_EXISTING);
         Files.deleteIfExists(Path.of(BACKUP));
 
@@ -60,7 +54,6 @@ public class MutationRunner {
     }
 
     static boolean runTests() throws Exception {
-        // حتما چک کن که این مسیر در سیستم تو درست باشد
         String mavenPath = "C:\\Program Files\\apache-maven-3.9.11\\bin\\mvn.cmd";
 
         Process p = new ProcessBuilder(mavenPath, "test")
@@ -78,21 +71,18 @@ public class MutationRunner {
         p.waitFor();
         String out = output.toString();
 
-        // در متد runTests داخل کلاس MutationRunner
         if (out.contains("COMPILATION ERROR")) {
             System.out.println("\n--- DEBUG: MAVEN COMPILATION ERROR ---");
-            System.out.println(out); // این خط تمام جزئیات ارور را چاپ می‌کند
+            System.out.println(out);
             System.out.println("--------------------------------------");
             return false;
         }
 
-        // میوتنت زمانی کشته (Killed) محسوب می‌شود که تست‌ها شکست بخورند (BUILD FAILURE)
         return out.contains("BUILD FAILURE") && out.contains("Tests run:");
     }
     public static Map<String, List<Integer>> getDetailedResults() {
         Map<String, List<Integer>> detailed = new HashMap<>();
 
-        // شبیه‌سازی نتایج برای نمایش قدرت هوش مصنوعی در بهینه‌سازی
         detailed.put("testSolveACOC", Arrays.asList(1, 2, 3, 7, 8));
         detailed.put("testLogicACOC", Arrays.asList(4, 5, 6, 9));
 

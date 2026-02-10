@@ -4,7 +4,6 @@ import java.util.*;
 
 public class SmartTestGenerator {
 
-    // نام متد باید دقیقاً optimizeTestSuite باشد تا در Main ارور ندهد
     public static void optimizeTestSuite(Map<String, List<Integer>> mutantKillMap) {
         System.out.println("\n--- شروع فاز بهینه‌سازی هوشمند (AI Optimization) ---");
 
@@ -16,7 +15,6 @@ public class SmartTestGenerator {
         Set<Integer> coveredByAI = new HashSet<>();
         List<String> optimizedTests = new ArrayList<>();
 
-        // الگوریتم حریصانه (Greedy)
         while (coveredByAI.size() < allUniqueMutants.size() * 0.9 && !mutantKillMap.isEmpty()) {
             String bestTest = null;
             int maxNewKills = -1;

@@ -21,10 +21,8 @@ public class CODMutation {
 
             String condition = ifMatcher.group(1).trim();
 
-            // شکستن شرط به operandها (سطح بالا)
             List<String> operands = splitCondition(condition);
 
-            // اگر فقط یک operand داشت، COD معنی ندارد
             if (operands.size() < 2) continue;
 
             for (int j = 0; j < operands.size(); j++) {
@@ -48,7 +46,6 @@ public class CODMutation {
         return count;
     }
 
-    // فقط && و || سطح بالا رو جدا می‌کنه (نه داخل پرانتز)
     private static List<String> splitCondition(String condition) {
         List<String> parts = new ArrayList<>();
         int depth = 0;
@@ -65,7 +62,7 @@ public class CODMutation {
                 if (twoChars.equals("&&") || twoChars.equals("||")) {
                     parts.add(current.toString().trim());
                     current.setLength(0);
-                    i++; // skip next char
+                    i++;
                     continue;
                 }
             }

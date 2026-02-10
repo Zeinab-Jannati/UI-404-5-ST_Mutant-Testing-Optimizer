@@ -11,33 +11,30 @@ public class SDLMutation {
         List<String> lines = Files.readAllLines(Paths.get(filePath));
         int count = 0;
 
-        boolean inMethod = false; // بررسی اینکه آیا داخل متد هستیم
-        int braceLevel = 0;       // سطح آکولاد
+        boolean inMethod = false;
+        int braceLevel = 0;
 
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i);
             String trimmed = line.trim();
 
-            // رد کردن کامنت‌ها و خطوط خالی و package/import
             if (trimmed.isEmpty() || trimmed.startsWith("//") ||
                     trimmed.startsWith("package") || trimmed.startsWith("import") ||
                     trimmed.startsWith("class") || trimmed.startsWith("@")) continue;
 
-            // آپدیت سطح آکولاد
             if (trimmed.contains("{")) {
                 braceLevel += countChar(trimmed, '{');
                 if (!inMethod && line.contains("(") && line.contains(")")) {
-                    inMethod = true; // شروع متد
+                    inMethod = true;
                 }
             }
             if (trimmed.contains("}")) {
                 braceLevel -= countChar(trimmed, '}');
                 if (inMethod && braceLevel == 0) {
-                    inMethod = false; // پایان متد
+                    inMethod = false;
                 }
             }
 
-            // حذف فقط وقتی داخل متد هستیم
             if (inMethod && (trimmed.endsWith(";") || trimmed.startsWith("return"))) {
                 String mutated = line.startsWith("return") ? getSafeReturn(line) : "// deleted statement";
                 count++;

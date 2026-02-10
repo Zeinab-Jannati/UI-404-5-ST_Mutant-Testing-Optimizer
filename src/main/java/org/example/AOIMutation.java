@@ -16,10 +16,8 @@ public class AOIMutation {
         Pattern numericMethod = Pattern.compile("(public|private|protected)?\\s*(int|double|float|long)\\s+\\w+\\s*\\(");
         Pattern booleanMethod = Pattern.compile("(public|private|protected)?\\s*boolean\\s+\\w+\\s*\\(");
 
-        // ریجکس بهبود یافته برای پیدا کردن شناسه‌ها
         Pattern varPattern = Pattern.compile("\\b([a-zA-Z_$][a-zA-Z\\d_$]*)\\b");
 
-        // لیست کلمات کلیدی که نباید منفی شوند
         String keywords = "|public|private|protected|static|final|return|if|else|int|boolean|double|float|long|class|package|import|";
 
         for (int i = 0; i < lines.size(); i++) {
@@ -34,13 +32,10 @@ public class AOIMutation {
             while (m.find()) {
                 String varName = m.group(1);
 
-                // فیلتر کردن کلمات کلیدی و مقادیر بازگشتی متدها
                 if (keywords.contains("|" + varName + "|")) continue;
 
-                // جلوگیری از منفی کردن متغیری که همین الان منفی پشتش هست
                 if (m.start() > 0 && line.charAt(m.start() - 1) == '-') continue;
 
-                // ساخت میوتنت با رعایت فاصله
                 String mutated = line.substring(0, m.start()) + "-" + varName + line.substring(m.end());
 
                 count++;

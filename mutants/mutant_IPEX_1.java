@@ -3,14 +3,14 @@ package org.example;
 public class Calculator {
     public int solve(int a, int b) {
         if (a > b) {
-            return a + b;
+            return a;
         }
         return a - b;
     }
 
     public boolean checkLogic(boolean A, boolean B) {
         if (A || B || (A == false)) {
-return false;
+            return true;
         }
         return false;
     }

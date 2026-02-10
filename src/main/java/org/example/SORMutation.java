@@ -14,12 +14,10 @@ public class SORMutation {
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i);
 
-            // خط کامنت را نادیده می‌گیریم
             if (line.trim().startsWith("//")) continue;
 
             String trimmed = line.trim();
 
-            // فقط خط‌های مهم: return یا assignment
             if (trimmed.startsWith("return ")) {
                 String mutated = generateReturnMutation(trimmed);
                 if (mutated != null) {
@@ -40,8 +38,6 @@ public class SORMutation {
     }
 
     private static String generateReturnMutation(String line) {
-        // مثال: return true; -> return false;
-        // مثال: return a + b; -> return a - b;
         if (line.contains("true")) return line.replace("true", "false");
         if (line.contains("false")) return line.replace("false", "true");
         if (line.matches(".*return\\s+\\d+.*")) return line.replaceAll("\\d+", "0");
@@ -49,11 +45,10 @@ public class SORMutation {
         if (line.contains("-")) return line.replace("-", "+");
         if (line.contains("*")) return line.replace("*", "+");
         if (line.contains("/")) return line.replace("/", "*");
-        return null; // اگر جایگزینی نداریم
+        return null;
     }
 
     private static String generateAssignmentMutation(String line) {
-        // مثال: x = y + z; -> x = y - z;
         if (line.contains("+")) return line.replace("+", "-");
         if (line.contains("-")) return line.replace("-", "+");
         if (line.contains("*")) return line.replace("*", "+");

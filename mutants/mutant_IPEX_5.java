@@ -1,9 +1,9 @@
 package org.example;
 
 public class Calculator {
-    public int solve(int a, int b) {
+    public int solve(int b, int a) {
         if (a > b) {
-            return a + b;
+            return a;
         }
         return a - b;
     }
@@ -12,7 +12,7 @@ public class Calculator {
         if (A || B || (A == false)) {
             return true;
         }
-return true;
+        return false;
     }
 
     public int bitwiseOperation(int n) {
@@ -23,7 +23,7 @@ return true;
         return internalProcess(-x, y);
     }
 
-    public int internalProcess(int m, int n) {
+    public int internalProcess(int n, int m) {
         return m * n;
     }
 

@@ -14,7 +14,6 @@ public class Main {
 
         System.out.println("=== PROFESSIONAL GENERIC MUTATION TESTING TOOL ===");
 
-        // 1. دریافت مسیر فایل
         System.out.print("\nEnter the full path of the Java file to test: ");
         String userInputPath = scanner.nextLine().trim();
         File sourceFile = new File(userInputPath);
@@ -42,6 +41,7 @@ public class Main {
 
         System.out.println("\nPHASE 1: MUTANT GENERATION");
         System.out.println("Traditional: 1.AOD, 2.AOR, 3.AOI, 4.COR, 5.COI, 6.COD, 7.LOD, 8.LOI, 9.LOR, 10.ROR, 11.SDL, 12.SOR");
+        System.out.println("Traditional: 13.IMCD, 14.IPEX, 15.IPVR, 16.IREM, 17.IUOI");
         System.out.print("\nYour choice (e.g., 18 for ALL): ");
 
         String input = scanner.nextLine().trim();
@@ -62,7 +62,12 @@ public class Main {
                 case "10" -> RORMutation.applyROR(targetPath);
                 case "11" -> SDLMutation.applySDL(targetPath);
                 case "12" -> SORMutation.applySOR(targetPath);
-                case "18" -> { // ALL
+                case "13" -> IMCD_Mutation.applyIMCD(targetPath);
+                case "14" -> IPEX_Mutation.applyIPEX(targetPath);
+                case "15" -> IPVR_Mutation.applyIPVR(targetPath);
+                case "16" -> IREM_Mutation.applyIREM(targetPath);
+                case "17" -> IUOI_Mutation.applyIUOI(targetPath);
+                case "18" -> {
                     AODMutation.applyAOD(targetPath);
                     AORMutation.applyAOR(targetPath);
                     AOIMutation.applyAOI(targetPath);
@@ -75,11 +80,15 @@ public class Main {
                     RORMutation.applyROR(targetPath);
                     SDLMutation.applySDL(targetPath);
                     SORMutation.applySOR(targetPath);
+                    IMCD_Mutation.applyIMCD(targetPath);
+                    IPEX_Mutation.applyIPEX(targetPath);
+                    IPVR_Mutation.applyIPVR(targetPath);
+                    IREM_Mutation.applyIREM(targetPath);
+                    IUOI_Mutation.applyIUOI(targetPath);
                 }
                 default -> System.out.println("Invalid choice.");
             }
 
-            // 3. اجرای Mutant ها
             System.out.println("\n PHASE 2: EXECUTION (SMART TEST ENGINE)");
             Map<String, int[]> realResults = MutationRunner.runAll(targetPath);
 
@@ -110,36 +119,32 @@ public class Main {
         Path testPath = Paths.get("src/test/java/org/example/GenericMutationTest.java");
         Files.createDirectories(testPath.getParent());
 
-        // استفاده از تست‌های قوی‌تر که تمام ترکیبات (ACOC) را پوشش می‌دهند
         StringBuilder sb = new StringBuilder();
         sb.append("package org.example;\n");
         sb.append("import org.junit.Test;\n");
         sb.append("import static org.junit.Assert.*;\n");
         sb.append("public class GenericMutationTest {\n");
 
-        // تست ACOC برای متد solve
         sb.append("    @Test\n");
         sb.append("    public void testSolveACOC() {\n");
         sb.append("        Calculator calc = new Calculator();\n");
-        sb.append("        assertEquals(15, calc.solve(10, 5));\n"); // حالت a > b
-        sb.append("        assertEquals(-5, calc.solve(5, 10));\n"); // حالت a <= b
+        sb.append("        assertEquals(15, calc.solve(10, 5));\n");
+        sb.append("        assertEquals(-5, calc.solve(5, 10));\n");
         sb.append("    }\n");
 
-        // تست ACOC برای متد checkLogic (تمام 4 حالت)
         sb.append("    @Test\n");
         sb.append("    public void testLogicACOC() {\n");
         sb.append("        Calculator calc = new Calculator();\n");
-        sb.append("        assertTrue(calc.checkLogic(true, true));\n");   // T, T
-        sb.append("        assertFalse(calc.checkLogic(true, false));\n"); // T, F
-        sb.append("        assertTrue(calc.checkLogic(false, true));\n");  // F, T
-        sb.append("        assertTrue(calc.checkLogic(false, false));\n"); // F, F
+        sb.append("        assertTrue(calc.checkLogic(true, true));\n");
+        sb.append("        assertFalse(calc.checkLogic(true, false));\n");
+        sb.append("        assertTrue(calc.checkLogic(false, true));\n");
+        sb.append("        assertTrue(calc.checkLogic(false, false));\n");
         sb.append("    }\n");
 
         sb.append("}");
         Files.write(testPath, sb.toString().getBytes());
     }
 
-    // محاسبه درصد واقعی Mutation
     private static double calculateRealScore(Map<String, int[]> results, String[] ops) {
         int killed = 0;
         int totalExecuted = 0;

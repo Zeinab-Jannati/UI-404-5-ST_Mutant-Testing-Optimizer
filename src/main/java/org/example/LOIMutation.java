@@ -16,13 +16,10 @@ public class LOIMutation {
             String originalLine = lines.get(i);
             String line = originalLine.trim();
 
-            // رد کردن کامنت‌ها
             if (line.startsWith("//")) continue;
 
-            // فقط if / while
             if (!line.startsWith("if") && !line.startsWith("while")) continue;
 
-            // شرط ساده باشد (نباید && یا || داشته باشد)
             if (line.contains("&&") || line.contains("||")) continue;
 
             int start = line.indexOf("(");
@@ -37,12 +34,10 @@ public class LOIMutation {
             );
             String suffix = originalLine.substring(originalLine.lastIndexOf(")"));
 
-            // Mutant 1: insert &&
             String mutant1 = prefix + condition + " && true" + suffix;
             count++;
             MutationUtils.saveMutant(lines, i, mutant1, "LOI_AND", count);
 
-            // Mutant 2: insert ||
             String mutant2 = prefix + condition + " || false" + suffix;
             count++;
             MutationUtils.saveMutant(lines, i, mutant2, "LOI_OR", count);

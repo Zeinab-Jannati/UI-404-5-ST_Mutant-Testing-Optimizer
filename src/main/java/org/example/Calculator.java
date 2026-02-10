@@ -1,9 +1,9 @@
 package org.example;
 
 public class Calculator {
-    public int solve(int a, int b) {
+    public int solve(int b, int a) {
         if (a > b) {
-            return a + b;
+            return a;
         }
         return a - b;
     }

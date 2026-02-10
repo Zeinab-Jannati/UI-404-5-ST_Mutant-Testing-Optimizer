@@ -4,7 +4,6 @@ import java.util.*;
 
 public class TestExecutor {
 
-    // حالا این متد نمرات واقعی را از خروجی مرحله تست می‌گیرد
     public static void showTraditionalReport(Map<String, int[]> realResults) {
         System.out.println("\n" + "=".repeat(70));
         System.out.println("           TRADITIONAL MUTATION TEST REPORT (REAL DATA)");
@@ -38,7 +37,6 @@ public class TestExecutor {
                 totalKilled, totalMutants, finalScore));
     }
 
-    // متد مشابه برای Integration
     public static void showIntegrationReport(Map<String, int[]> realResults) {
         System.out.println("\n" + "=".repeat(70));
         System.out.println("           INTEGRATION MUTATION TEST REPORT (REAL DATA)");

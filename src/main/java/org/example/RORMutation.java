@@ -18,25 +18,20 @@ public class RORMutation {
 
             String line = lines.get(i);
 
-            // کامنت
             if (line.trim().startsWith("//")) continue;
 
-            // فقط شرط‌ها
             if (!line.contains("if") && !line.contains("while")) continue;
 
-            // جلوگیری از bitwise
             if (line.contains("<<") || line.contains(">>")) continue;
 
             for (String op : relOps) {
 
-                // اپراتور دقیق (نه بخشی از چیز دیگه)
                 if (line.contains(" " + op + " ")) {
 
                     for (String replacement : relOps) {
 
                         if (!op.equals(replacement)) {
 
-                            // جلوگیری از boolean invalid
                             if (line.contains("true") || line.contains("false")) {
                                 if (!(op.equals("==") || op.equals("!="))) continue;
                                 if (!(replacement.equals("==") || replacement.equals("!="))) continue;
