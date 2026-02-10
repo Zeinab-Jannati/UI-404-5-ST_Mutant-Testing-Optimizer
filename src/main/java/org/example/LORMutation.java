@@ -1,9 +1,9 @@
 package org.example;
 
 import java.io.IOException;
-        import java.nio.file.Files;
-        import java.nio.file.Paths;
-        import java.util.List;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
 
 public class LORMutation {
 
@@ -13,25 +13,35 @@ public class LORMutation {
         int count = 0;
 
         for (int i = 0; i < lines.size(); i++) {
-            String line = lines.get(i).trim();
+
+            String originalLine = lines.get(i);
 
             // رد کردن کامنت
-            if (line.startsWith("//")) {
+            if (originalLine.trim().startsWith("//")) {
                 continue;
             }
 
-            if (line.contains("&&") || line.contains("||")) {
+            // بررسی وجود عملگر منطقی
+            if (originalLine.contains("&&") || originalLine.contains("||")) {
 
-                String mutated;
+                // روی هر کاراکتر حرکت می‌کنیم
+                for (int idx = 0; idx < originalLine.length() - 1; idx++) {
 
-                if (line.contains("&&")) {
-                    mutated = line.replace("&&", "||");
-                } else {
-                    mutated = line.replace("||", "&&");
+                    String sub = originalLine.substring(idx, idx + 2);
+
+                    if (sub.equals("&&") || sub.equals("||")) {
+
+                        String replacement = sub.equals("&&") ? "||" : "&&";
+
+                        String mutatedLine =
+                                originalLine.substring(0, idx)
+                                        + replacement
+                                        + originalLine.substring(idx + 2);
+
+                        count++;
+                        MutationUtils.saveMutant(lines, i, mutatedLine, "LOR", count);
+                    }
                 }
-
-                count++;
-                MutationUtils.saveMutant(lines, i, mutated, "LOR", count);
             }
         }
 
@@ -39,5 +49,3 @@ public class LORMutation {
         return count;
     }
 }
-
-
