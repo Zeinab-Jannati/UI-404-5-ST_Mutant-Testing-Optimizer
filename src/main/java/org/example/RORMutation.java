@@ -1,9 +1,9 @@
 package org.example;
 
 import java.io.IOException;
-        import java.nio.file.Files;
-        import java.nio.file.Paths;
-        import java.util.List;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
 
 public class RORMutation {
 
@@ -12,24 +12,42 @@ public class RORMutation {
         List<String> lines = Files.readAllLines(Paths.get(filePath));
         int count = 0;
 
-        String[] operators = {">", "<", ">=", "<=", "==", "!="};
+        String[] relOps = {">=", "<=", "!=", "==", ">", "<"};
 
         for (int i = 0; i < lines.size(); i++) {
-            String line = lines.get(i).trim();
 
-            if (line.startsWith("//"))
-                continue;
+            String line = lines.get(i);
 
-            for (String op : operators) {
+            // کامنت
+            if (line.trim().startsWith("//")) continue;
 
-                if (line.contains(op)) {
+            // فقط شرط‌ها
+            if (!line.contains("if") && !line.contains("while")) continue;
 
-                    for (String replacement : operators) {
+            // جلوگیری از bitwise
+            if (line.contains("<<") || line.contains(">>")) continue;
+
+            for (String op : relOps) {
+
+                // اپراتور دقیق (نه بخشی از چیز دیگه)
+                if (line.contains(" " + op + " ")) {
+
+                    for (String replacement : relOps) {
 
                         if (!op.equals(replacement)) {
 
+                            // جلوگیری از boolean invalid
+                            if (line.contains("true") || line.contains("false")) {
+                                if (!(op.equals("==") || op.equals("!="))) continue;
+                                if (!(replacement.equals("==") || replacement.equals("!="))) continue;
+                            }
+
+                            String mutated = line.replace(
+                                    " " + op + " ",
+                                    " " + replacement + " "
+                            );
+
                             count++;
-                            String mutated = line.replace(op, replacement);
                             MutationUtils.saveMutant(lines, i, mutated, "ROR", count);
                         }
                     }
@@ -41,4 +59,3 @@ public class RORMutation {
         return count;
     }
 }
-
