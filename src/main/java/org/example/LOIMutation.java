@@ -1,9 +1,9 @@
 package org.example;
 
 import java.io.IOException;
-        import java.nio.file.Files;
-        import java.nio.file.Paths;
-        import java.util.List;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
 
 public class LOIMutation {
 
@@ -13,50 +13,42 @@ public class LOIMutation {
         int count = 0;
 
         for (int i = 0; i < lines.size(); i++) {
-            String line = lines.get(i).trim();
+            String originalLine = lines.get(i);
+            String line = originalLine.trim();
 
-            // رد کردن کامنت
-            if (line.startsWith("//")) {
-                continue;
-            }
+            // رد کردن کامنت‌ها
+            if (line.startsWith("//")) continue;
 
-            if (line.contains("&&") || line.contains("||")) {
+            // فقط if / while
+            if (!line.startsWith("if") && !line.startsWith("while")) continue;
 
-                String operator = line.contains("&&") ? "&&" : "||";
+            // شرط ساده باشد (نباید && یا || داشته باشد)
+            if (line.contains("&&") || line.contains("||")) continue;
 
-                int start = line.indexOf("(");
-                int end = line.indexOf(")");
+            int start = line.indexOf("(");
+            int end = line.lastIndexOf(")");
 
-                if (start != -1 && end != -1) {
+            if (start == -1 || end == -1 || end <= start) continue;
 
-                    String condition = line.substring(start + 1, end);
-                    String[] parts = condition.split("\\Q" + operator + "\\E");
+            String prefix = originalLine.substring(0, originalLine.indexOf("(") + 1);
+            String condition = originalLine.substring(
+                    originalLine.indexOf("(") + 1,
+                    originalLine.lastIndexOf(")")
+            );
+            String suffix = originalLine.substring(originalLine.lastIndexOf(")"));
 
-                    if (parts.length == 2) {
+            // Mutant 1: insert &&
+            String mutant1 = prefix + condition + " && true" + suffix;
+            count++;
+            MutationUtils.saveMutant(lines, i, mutant1, "LOI_AND", count);
 
-                        String left = parts[0].trim();
-                        String right = parts[1].trim();
-
-                        // Mutant 1 → negate left
-                        count++;
-                        String mutated1 = line.substring(0, start + 1)
-                                + "!" + left + " " + operator + " " + right
-                                + line.substring(end);
-                        MutationUtils.saveMutant(lines, i, mutated1, "LOI", count);
-
-                        // Mutant 2 → negate right
-                        count++;
-                        String mutated2 = line.substring(0, start + 1)
-                                + left + " " + operator + " !" + right
-                                + line.substring(end);
-                        MutationUtils.saveMutant(lines, i, mutated2, "LOI", count);
-                    }
-                }
-            }
+            // Mutant 2: insert ||
+            String mutant2 = prefix + condition + " || false" + suffix;
+            count++;
+            MutationUtils.saveMutant(lines, i, mutant2, "LOI_OR", count);
         }
 
         System.out.println("LOI Operator: " + count + " mutants generated.");
         return count;
     }
 }
-

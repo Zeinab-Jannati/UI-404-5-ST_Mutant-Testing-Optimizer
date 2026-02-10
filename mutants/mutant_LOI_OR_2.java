@@ -2,14 +2,14 @@ package org.example;
 
 public class Calculator {
     public int solve(int a, int b) {
-        if (a > b) {
+        if (a > b || false) {
             return a + b;
         }
         return a - b;
     }
 
     public boolean checkLogic(boolean A, boolean B) {
-        if ((A == false)) {
+        if (A || B || (A == false)) {
             return true;
         }
         return false;
