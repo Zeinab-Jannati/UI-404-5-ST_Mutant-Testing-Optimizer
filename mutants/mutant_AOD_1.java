@@ -1,7 +1,6 @@
 package org.example;
 
 public class Calculator {
-
     public int solve(int b, int a) {
         return a;
     }
@@ -15,7 +14,7 @@ public class Calculator {
     }
 
     public int calculateSum(int x, int y) {
-        return +x + -y;
+        return x;
     }
 
     public int internalProcess(int m, int n) {

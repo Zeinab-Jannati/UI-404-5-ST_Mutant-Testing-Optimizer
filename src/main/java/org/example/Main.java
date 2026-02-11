@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class Main {
@@ -14,9 +16,20 @@ public class Main {
 
         System.out.println("=== PROFESSIONAL GENERIC MUTATION TESTING TOOL ===");
 
-        System.out.print("\nEnter the full path of the Java file to test: ");
+        System.out.print("\nWhich file to test? : ");
+        System.out.println("\n1.p1\n2.p2\n3.p3");
         String userInputPath = scanner.nextLine().trim();
-        File sourceFile = new File(userInputPath);
+
+        if (userInputPath == "p1")
+        {
+            File sourceFile = new File("src/main/java/org/example/Calculator.java");
+            if (!sourceFile.exists()) {
+                System.out.println("ERROR: File not found!");
+                return;
+            }
+        }
+
+        File sourceFile = new File("src/main/java/org/example/Calculator.java");
         if (!sourceFile.exists()) {
             System.out.println("ERROR: File not found!");
             return;
@@ -45,49 +58,54 @@ public class Main {
         System.out.print("\nYour choice (e.g., 18 for ALL): ");
 
         String input = scanner.nextLine().trim();
+        String[] choices = input.split("[,\\s]+");
 
         try {
             System.out.println("\n GENERATING MUTANTS FOR " + fileName + "...");
 
-            switch (input) {
-                case "1" -> AODMutation.applyAOD(targetPath);
-                case "2" -> AORMutation.applyAOR(targetPath);
-                case "3" -> AOIMutation.applyAOI(targetPath);
-                case "4" -> CORMutation.applyCOR(targetPath);
-                case "5" -> COIMutation.applyCOI(targetPath);
-                case "6" -> CODMutation.applyCOD(targetPath);
-                case "7" -> LODMutation.applyLOD(targetPath);
-                case "8" -> LOIMutation.applyLOI(targetPath);
-                case "9" -> LORMutation.applyLOR(targetPath);
-                case "10" -> RORMutation.applyROR(targetPath);
-                case "11" -> SDLMutation.applySDL(targetPath);
-                case "12" -> SORMutation.applySOR(targetPath);
-                case "13" -> IMCD_Mutation.applyIMCD(targetPath);
-                case "14" -> IPEX_Mutation.applyIPEX(targetPath);
-                case "15" -> IPVR_Mutation.applyIPVR(targetPath);
-                case "16" -> IREM_Mutation.applyIREM(targetPath);
-                case "17" -> IUOI_Mutation.applyIUOI(targetPath);
-                case "18" -> {
-                    AODMutation.applyAOD(targetPath);
-                    AORMutation.applyAOR(targetPath);
-                    AOIMutation.applyAOI(targetPath);
-                    CORMutation.applyCOR(targetPath);
-                    COIMutation.applyCOI(targetPath);
-                    CODMutation.applyCOD(targetPath);
-                    LODMutation.applyLOD(targetPath);
-                    LOIMutation.applyLOI(targetPath);
-                    LORMutation.applyLOR(targetPath);
-                    RORMutation.applyROR(targetPath);
-                    SDLMutation.applySDL(targetPath);
-                    SORMutation.applySOR(targetPath);
-                    IMCD_Mutation.applyIMCD(targetPath);
-                    IPEX_Mutation.applyIPEX(targetPath);
-                    IPVR_Mutation.applyIPVR(targetPath);
-                    IREM_Mutation.applyIREM(targetPath);
-                    IUOI_Mutation.applyIUOI(targetPath);
+            for (String choice: choices)
+            {
+                switch (choice) {
+                    case "1" -> AODMutation.applyAOD(targetPath);
+                    case "2" -> AORMutation.applyAOR(targetPath);
+                    case "3" -> AOIMutation.applyAOI(targetPath);
+                    case "4" -> CORMutation.applyCOR(targetPath);
+                    case "5" -> COIMutation.applyCOI(targetPath);
+                    case "6" -> CODMutation.applyCOD(targetPath);
+                    case "7" -> LODMutation.applyLOD(targetPath);
+                    case "8" -> LOIMutation.applyLOI(targetPath);
+                    case "9" -> LORMutation.applyLOR(targetPath);
+                    case "10" -> RORMutation.applyROR(targetPath);
+                    case "11" -> SDLMutation.applySDL(targetPath);
+                    case "12" -> SORMutation.applySOR(targetPath);
+                    case "13" -> IMCD_Mutation.applyIMCD(targetPath);
+                    case "14" -> IPEX_Mutation.applyIPEX(targetPath);
+                    case "15" -> IPVR_Mutation.applyIPVR(targetPath);
+                    case "16" -> IREM_Mutation.applyIREM(targetPath);
+                    case "17" -> IUOI_Mutation.applyIUOI(targetPath);
+                    case "18" -> {
+                        AODMutation.applyAOD(targetPath);
+                        AORMutation.applyAOR(targetPath);
+                        AOIMutation.applyAOI(targetPath);
+                        CORMutation.applyCOR(targetPath);
+                        COIMutation.applyCOI(targetPath);
+                        CODMutation.applyCOD(targetPath);
+                        LODMutation.applyLOD(targetPath);
+                        LOIMutation.applyLOI(targetPath);
+                        LORMutation.applyLOR(targetPath);
+                        RORMutation.applyROR(targetPath);
+                        SDLMutation.applySDL(targetPath);
+                        SORMutation.applySOR(targetPath);
+                        IMCD_Mutation.applyIMCD(targetPath);
+                        IPEX_Mutation.applyIPEX(targetPath);
+                        IPVR_Mutation.applyIPVR(targetPath);
+                        IREM_Mutation.applyIREM(targetPath);
+                        IUOI_Mutation.applyIUOI(targetPath);
+                    }
+                    default -> System.out.println("Invalid choice.");
                 }
-                default -> System.out.println("Invalid choice.");
             }
+
 
             System.out.println("\n PHASE 2: EXECUTION (SMART TEST ENGINE)");
             Map<String, int[]> realResults = MutationRunner.runAll(targetPath);
@@ -95,14 +113,31 @@ public class Main {
             TestExecutor.showTraditionalReport(realResults);
             TestExecutor.showIntegrationReport(realResults);
 
-            double traditionalScore = calculateRealScore(realResults, new String[]{
-                    "AOD", "AOR", "AOI", "COR", "COI", "COD", "LOD", "LOI", "LOR", "ROR", "SDL", "SOR"
-            });
-            double integrationScore = calculateRealScore(realResults, new String[]{
-                    "IPVR", "IUOI", "IPEX", "IMCD", "IREM"
-            });
+            String[] tradOps = {"AOD", "AOR", "AOI", "COR", "COI", "COD", "LOD", "LOI", "LOR", "ROR", "SDL", "SOR"};
+            String[] integOps = {"IPVR", "IUOI", "IPEX", "IMCD", "IREM"};
 
-            double finalScore = (traditionalScore * 0.4) + (integrationScore * 0.6);
+            double traditionalScore = calculateRealScore(realResults, tradOps);
+            double integrationScore = calculateRealScore(realResults, integOps);
+
+            // تشخیص اینکه آیا از هر دو بخش میوتنت داریم یا خیر
+            boolean hasTrad = hasAnyMutants(realResults, tradOps);
+            boolean hasInteg = hasAnyMutants(realResults, integOps);
+
+            double finalScore;
+            if (hasTrad && hasInteg) {
+                // فرمول ترکیبی با وزن 40 و 60
+                finalScore = (traditionalScore * 0.4) + (integrationScore * 0.6);
+                System.out.println("\n--- FINAL COMBINED SCORE (40% Traditional / 60% Integration) ---");
+            } else if (hasInteg) {
+                // فقط اینتگریشن انتخاب شده
+                finalScore = integrationScore;
+                System.out.println("\n--- FINAL INTEGRATION SCORE (100%) ---");
+            } else {
+                // فقط سنتی انتخاب شده
+                finalScore = traditionalScore;
+                System.out.println("\n--- FINAL TRADITIONAL SCORE (100%) ---");
+            }
+
             System.out.println("\nFINAL SCORE FOR " + fileName + ": " + String.format("%.2f", finalScore) + "%");
 
             System.out.println("\n PHASE 3: AI TEST SUITE MINIMIZATION");
@@ -114,37 +149,59 @@ public class Main {
             scanner.close();
         }
     }
+    private static boolean hasAnyMutants(Map<String, int[]> results, String[] ops) {
+        for (String op : ops) {
+            if (results.containsKey(op) && results.get(op)[1] > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     private static void createGenericAutoTest(String className) throws IOException {
-        Path testPath = Paths.get("src/test/java/org/example/GenericMutationTest.java");
+        Path sourcePath = Paths.get("src/main/java/org/example/" + className + ".java");
+        String content = Files.readString(sourcePath);
+
+        Path testPath = Paths.get("src/test/java/org/example/" + className + "AutoTest.java");
         Files.createDirectories(testPath.getParent());
 
         StringBuilder sb = new StringBuilder();
-        sb.append("package org.example;\n");
-        sb.append("import org.junit.Test;\n");
-        sb.append("import static org.junit.Assert.*;\n");
-        sb.append("public class GenericMutationTest {\n");
+        sb.append("package org.example;\n\nimport org.junit.Test;\nimport static org.junit.Assert.*;\n\n");
+        sb.append("public class " + className + "AutoTest {\n\n");
+        sb.append("    " + className + " target = new " + className + "();\n\n");
 
-        sb.append("    @Test\n");
-        sb.append("    public void testSolveACOC() {\n");
-        sb.append("        Calculator calc = new Calculator();\n");
-        sb.append("        assertEquals(15, calc.solve(10, 5));\n");
-        sb.append("        assertEquals(-5, calc.solve(5, 10));\n");
-        sb.append("    }\n");
+        // Regex برای استخراج متد، نوع بازگشتی و پارامترها
+        Pattern pattern = Pattern.compile("public\\s+(int|boolean)\\s+(\\w+)\\s*\\(([^)]*)\\)");
+        Matcher matcher = pattern.matcher(content);
 
-        sb.append("    @Test\n");
-        sb.append("    public void testLogicACOC() {\n");
-        sb.append("        Calculator calc = new Calculator();\n");
-        sb.append("        assertTrue(calc.checkLogic(true, true));\n");
-        sb.append("        assertFalse(calc.checkLogic(true, false));\n");
-        sb.append("        assertTrue(calc.checkLogic(false, true));\n");
-        sb.append("        assertTrue(calc.checkLogic(false, false));\n");
-        sb.append("    }\n");
+        while (matcher.find()) {
+            String returnType = matcher.group(1);
+            String methodName = matcher.group(2);
+            String params = matcher.group(3).trim();
+            int paramCount = params.isEmpty() ? 0 : params.split(",").length;
 
-        sb.append("}");
+            sb.append("    @Test\n    public void test_" + methodName + "_Dynamic() {\n");
+
+            if (returnType.equals("boolean")) {
+                sb.append("        boolean[] v = {true, false};\n");
+                if (paramCount == 1) {
+                    sb.append("        for(boolean a : v) { target." + methodName + "(a); }\n");
+                } else if (paramCount == 2) {
+                    sb.append("        for(boolean a : v) { for(boolean b : v) { target." + methodName + "(a, b); } }\n");
+                }
+            } else if (returnType.equals("int")) {
+                sb.append("        int[] bv = {0, 1, -1, 100};\n");
+                if (paramCount == 1) {
+                    sb.append("        for(int x : bv) { try { target." + methodName + "(x); } catch(Exception e){} }\n");
+                } else if (paramCount == 2) {
+                    sb.append("        for(int x : bv) { for(int y : bv) { try { target." + methodName + "(x, y); } catch(Exception e){} } }\n");
+                }
+            }
+            sb.append("    }\n\n");
+        }
+        sb.append("}\n");
         Files.write(testPath, sb.toString().getBytes());
     }
-
     private static double calculateRealScore(Map<String, int[]> results, String[] ops) {
         int killed = 0;
         int totalExecuted = 0;

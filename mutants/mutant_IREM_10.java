@@ -1,9 +1,8 @@
 package org.example;
 
 public class Calculator {
-
     public int solve(int b, int a) {
-        return a - b;
+        return a;
     }
 
     public boolean checkLogic(boolean B, boolean A) {
@@ -15,10 +14,10 @@ public class Calculator {
     }
 
     public int calculateSum(int x, int y) {
-return 0;
+        return x - y;
     }
 
     public int internalProcess(int m, int n) {
-        return m * n;
+return 0;
     }
 }

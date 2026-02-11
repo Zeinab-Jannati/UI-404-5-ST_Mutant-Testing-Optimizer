@@ -39,18 +39,18 @@ public class MutationRunner {
             String operator = parts[1];
             result.putIfAbsent(operator, new int[]{0, 0});
 
-            System.out.println("▶ Testing " + mutant.getName());
+            System.out.println("Testing " + mutant.getName());
 
             Files.copy(mutant.toPath(), Path.of(TARGET_PATH), StandardCopyOption.REPLACE_EXISTING);
 
             TestResult testResult = runTests();
 
             if (testResult == TestResult.COMPILE_ERROR) {
-                System.out.println("INVALID (COMPILE ERROR)");
-                continue; // ❗ مهم: نه killed نه survived
+                System.err.println("INVALID (COMPILE ERROR) found in: " + mutant.getName());
+                continue;
             }
 
-            result.get(operator)[1]++; // فقط mutant معتبر شمرده می‌شود
+            result.get(operator)[1]++;
 
             if (testResult == TestResult.KILLED) {
                 result.get(operator)[0]++;
@@ -81,29 +81,29 @@ public class MutationRunner {
             }
         }
 
-        int exitCode = p.waitFor();
+        p.waitFor();
         String out = output.toString();
 
-        // 1️⃣ compile error → INVALID
         if (out.contains("COMPILATION ERROR")) {
-            System.out.println("\n--- DEBUG: MAVEN COMPILATION ERROR ---");
-            System.out.println(out);
-            System.out.println("--------------------------------------");
             return TestResult.COMPILE_ERROR;
         }
 
-        // 2️⃣ tests failed → KILLED
-        if (out.contains("Tests run:") && out.contains("Failures:") && !out.contains("Failures: 0")) {
+        if (out.contains("Failures:") && !out.contains("Failures: 0")) {
+            return TestResult.KILLED;
+        }
+        if (out.contains("Errors:") && !out.contains("Errors: 0")) {
             return TestResult.KILLED;
         }
 
-        // 3️⃣ tests passed
-        if (exitCode == 0) {
+        if (out.contains("BUILD SUCCESS")) {
             return TestResult.SURVIVED;
         }
 
-        // fallback (safety)
-        return TestResult.COMPILE_ERROR;
+        if (out.contains("BUILD FAILURE")) {
+            return TestResult.KILLED;
+        }
+
+        return TestResult.SURVIVED;
     }
 
 

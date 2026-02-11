@@ -20,6 +20,7 @@ public class AODMutation {
                 MutationUtils.saveMutant(lines, i, m2, "AOD", count);
             }
         }
+        System.out.println("AOI Operator: " + count + " smart mutants generated.");
         return count;
     }
 }
